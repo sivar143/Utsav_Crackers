@@ -75,4 +75,25 @@ class ProductCataloguePersistenceTest {
         assertThat(restored.getItems().get(0).getProduct().getSku()).isEqualTo("FNT-001");
         assertThat(restored.getItems().get(0).getQuantity()).isEqualTo(2);
     }
+    @Test
+    @Transactional
+    void persistsCustomerAddressWithOwnershipAndIndianDeliveryFields() {
+        CustomerAddressRequest request = new CustomerAddressRequest(
+                "Home", "Customer Name", "+919876543210", "12 Main Road",
+                null, "Near the post office", "Rajamahendravaram", "East Godavari",
+                "IN-AP", "533001", "IN");
+        CustomerAddress saved = customerAddresses.saveAndFlush(
+                new CustomerAddress("keycloak-subject-456", request, true));
+        entityManager.clear();
+
+        CustomerAddress restored = customerAddresses
+                .findByIdAndCustomerSubject(saved.getId(), "keycloak-subject-456")
+                .orElseThrow();
+
+        assertThat(restored.getPostalCode()).isEqualTo("533001");
+        assertThat(restored.getStateCode()).isEqualTo("IN-AP");
+        assertThat(restored.isDefaultAddress()).isTrue();
+        assertThat(restored.getLandmark()).isEqualTo("Near the post office");
+    }
+
 }
