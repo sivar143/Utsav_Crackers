@@ -11,6 +11,10 @@ import in.utsavcrackers.inventory.InventoryBalance;
 import in.utsavcrackers.inventory.InventoryBalanceRepository;
 import in.utsavcrackers.inventory.InventoryMovement;
 import in.utsavcrackers.inventory.InventoryMovementRepository;
+import in.utsavcrackers.compliance.FireworksJurisdictionPolicy;
+import in.utsavcrackers.compliance.FireworksPolicyRepository;
+import in.utsavcrackers.compliance.FireworksPolicyRequest;
+import in.utsavcrackers.compliance.PolicyStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;
@@ -43,6 +47,9 @@ class ProductCataloguePersistenceTest {
 
     @Autowired
     private InventoryMovementRepository inventoryMovements;
+
+    @Autowired
+    private FireworksPolicyRepository fireworksPolicies;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -127,6 +134,27 @@ class ProductCataloguePersistenceTest {
         assertThat(restored.getAvailableQuantity()).isEqualTo(8);
         assertThat(movements).hasSize(1);
         assertThat(movements.get(0).getActorSubject()).isEqualTo("admin-subject");
+    }
+
+    @Test
+    @Transactional
+    void persistsDraftFireworksPolicyAndSecondPartyApprovalAudit() {
+        FireworksPolicyRequest request = new FireworksPolicyRequest(
+                "IN-AP", "East Godavari", null, true, true, true, true,
+                java.time.Instant.parse("2026-01-01T00:00:00Z"), null,
+                "Official government order reference", "Reviewed legal notes");
+        FireworksJurisdictionPolicy saved = fireworksPolicies.saveAndFlush(
+                new FireworksJurisdictionPolicy(request, "admin-creator"));
+        entityManager.clear();
+
+        FireworksJurisdictionPolicy restored = fireworksPolicies.findById(saved.getId()).orElseThrow();
+        assertThat(restored.getStatus()).isEqualTo(PolicyStatus.DRAFT);
+        assertThat(restored.getScopeType()).isEqualTo("DISTRICT");
+        restored.approve("admin-reviewer");
+        fireworksPolicies.flush();
+
+        assertThat(restored.getReviewedBy()).isEqualTo("admin-reviewer");
+        assertThat(restored.getStatus()).isEqualTo(PolicyStatus.APPROVED);
     }
 
 }
