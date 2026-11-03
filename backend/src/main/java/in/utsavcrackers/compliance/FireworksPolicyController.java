@@ -42,7 +42,10 @@ public class FireworksPolicyController {
     }
 
     @PutMapping("/{id}/revoke")
-    public FireworksPolicyResponse revoke(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
-        return service.revoke(jwt.getSubject(), id);
+    public FireworksPolicyResponse revoke(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID id,
+            @Valid @RequestBody FireworksPolicyRevokeRequest request) {
+        return service.revoke(jwt.getSubject(), id, request.reason());
     }
 }
