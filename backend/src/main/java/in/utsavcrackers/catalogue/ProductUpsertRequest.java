@@ -12,7 +12,12 @@ public record ProductUpsertRequest(
         @NotBlank @Size(max = 64) String sku,
         @NotBlank @Size(max = 180) String name,
         @Size(max = 2000) String description,
+        @Size(max = 1500000) String imageData,
         @NotNull UUID categoryId,
         @NotNull @DecimalMin("0.01") BigDecimal price,
         @NotBlank @Pattern(regexp = "[A-Z]{3}") String currency) {
+    public ProductUpsertRequest(String sku, String name, String description, UUID categoryId,
+            BigDecimal price, String currency) {
+        this(sku, name, description, null, categoryId, price, currency);
+    }
 }
