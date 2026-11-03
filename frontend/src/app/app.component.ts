@@ -6,11 +6,13 @@ import { CatalogueAdminComponent } from './admin/catalogue-admin.component';
 import { InventoryAdminComponent } from './inventory/inventory-admin.component';
 import { ComplianceAdminComponent } from './compliance/compliance-admin.component';
 import { AuthService } from './auth/auth.service';
+import { CustomerAuthComponent } from './auth/customer-auth.component';
 
 @Component({
   selector: 'uc-root',
   standalone: true,
-  imports: [ProductCatalogueComponent, CartComponent, CustomerAddressComponent, CatalogueAdminComponent, InventoryAdminComponent, ComplianceAdminComponent],
+  imports: [ProductCatalogueComponent, CartComponent, CustomerAddressComponent, CatalogueAdminComponent,
+    InventoryAdminComponent, ComplianceAdminComponent, CustomerAuthComponent],
   template: `
     <main class="container py-4 py-md-5">
       <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
@@ -20,7 +22,7 @@ import { AuthService } from './auth/auth.service';
             <span class="small text-secondary d-none d-sm-inline">{{ auth.username }}</span>
             <button class="btn btn-outline-secondary btn-sm" type="button" (click)="logout()">Sign out</button>
           } @else {
-            <button class="btn btn-outline-success btn-sm" type="button" (click)="login()">Sign in</button>
+            <button class="btn btn-outline-success btn-sm" type="button" (click)="adminLogin()">Administrator sign in</button>
           }
         </div>
       </header>
@@ -29,6 +31,7 @@ import { AuthService } from './auth/auth.service';
         <h1 class="display-5 fw-bold mb-3">Celebrate with care.</h1>
         <p class="lead mb-0">Discover products with transparent pricing and clear fulfilment information.</p>
       </section>
+      <uc-customer-auth />
       <uc-catalogue-admin />
       <uc-inventory-admin />
       <uc-compliance-admin />
@@ -49,7 +52,7 @@ import { AuthService } from './auth/auth.service';
 export class AppComponent {
   readonly auth = inject(AuthService);
 
-  login(): void {
+  adminLogin(): void {
     void this.auth.login();
   }
 
