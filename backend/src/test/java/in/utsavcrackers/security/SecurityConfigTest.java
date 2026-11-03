@@ -34,6 +34,11 @@ class SecurityConfigTest {
     }
 
     @Test
+    void publicCatalogueRoutesDoNotRequireAuthentication() throws Exception {
+        mockMvc.perform(get("/api/v1/products")).andExpect(status().isNotFound());
+    }
+
+    @Test
     void adminRoutesRejectAnonymousRequests() throws Exception {
         mockMvc.perform(get("/api/v1/admin/example")).andExpect(status().isUnauthorized());
     }
