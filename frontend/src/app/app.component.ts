@@ -29,7 +29,7 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
           @if (auth.isAuthenticated) {
             <div class="account-menu" (mouseenter)="accountMenuOpen.set(true)" (mouseleave)="accountMenuOpen.set(false)" (focusin)="accountMenuOpen.set(true)" (focusout)="closeAccountMenu($event)">
               <button class="btn btn-outline-secondary btn-sm account-trigger" type="button" aria-haspopup="true"
-                [attr.aria-expanded]="accountMenuOpen()" (click)="accountMenuOpen.update(open => !open)">
+                [attr.aria-expanded]="accountMenuOpen()" (click)="toggleAccountMenu()">
                 {{ auth.username || 'My account' }} <span aria-hidden="true">▾</span>
               </button>
               @if (accountMenuOpen()) {
@@ -108,9 +108,12 @@ export class AppComponent {
 
   showCustomerLogin(): void { this.customerAuthMode.set('login'); }
 
-  openAddressPanel(): void {
+  toggleAccountMenu(): void { this.accountMenuOpen.update(value => !value); }
+
+  openAddressPanel(returnToCart = false): void {
     this.accountMenuOpen.set(false);
     this.cartOpen.set(false);
+    this.addressPanelReturnToCart.set(returnToCart);
     this.addressPanelOpen.set(true);
   }
 
@@ -119,7 +122,12 @@ export class AppComponent {
     if (!(event.currentTarget as HTMLElement).contains(next)) this.accountMenuOpen.set(false);
   }
 
-  onAddressSaved(): void { this.addressPanelOpen.set(false); this.cartOpen.set(true); }
+  onAddressSaved(): void {
+    if (this.addressPanelReturnToCart()) {
+      this.addressPanelOpen.set(false);
+      this.cartOpen.set(true);
+    }
+  }
 
   closeCustomerAuth(): void { this.customerAuthMode.set(null); }
 
