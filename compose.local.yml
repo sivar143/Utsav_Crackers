@@ -72,6 +72,9 @@ services:
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-utsav_app}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env.local}
       KEYCLOAK_ISSUER_URI: http://localhost:8081/realms/utsav-crackers
+      KEYCLOAK_INTERNAL_URL: http://keycloak:8080
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Set KEYCLOAK_ADMIN_PASSWORD in .env.local}
       # Container-to-container URL for key retrieval; token issuer remains localhost:8081.
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/utsav-crackers/protocol/openid-connect/certs
     ports:
