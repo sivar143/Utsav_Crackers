@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import { ProductCatalogueComponent } from './catalogue/product-catalogue.component';
 import { CartComponent } from './cart/cart.component';
 import { CustomerAddressComponent } from './customer-address/customer-address.component';
@@ -18,6 +18,10 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
       <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <a class="brand-mark text-decoration-none" href="/" aria-label="Utsav Crackers home">UTSAV CRACKERS</a>
         <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-outline-success btn-sm position-relative" type="button" aria-label="Open shopping cart" (click)="cartOpen.set(true)">
+            <span aria-hidden="true">🛒</span><span class="ms-1">Cart</span>
+            @if (cart.cart().totalQuantity > 0) { <span class="badge rounded-pill text-bg-success ms-1">{{ cart.cart().totalQuantity }}</span> }
+          </button>
           @if (auth.isAuthenticated) {
             <span class="small text-secondary d-none d-sm-inline">{{ auth.username }}</span>
             <button class="btn btn-outline-secondary btn-sm" type="button" (click)="logout()">Sign out</button>
@@ -39,8 +43,10 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
       <uc-catalogue-admin />
       <uc-inventory-admin />
       <uc-compliance-admin />
-      <uc-cart />
-      <uc-address-book />
+      <uc-cart [opened]="cartOpen()" (close)="cartOpen.set(false)" (requestAddress)="openAddressPanel()" />
+      @if (addressPanelOpen() && auth.isAuthenticated) {
+        <uc-address-book />
+      }
       <uc-product-catalogue />
       <section class="border-top pt-3 text-secondary small">
         Product availability and delivery eligibility will be confirmed before checkout.
@@ -56,8 +62,17 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
 export class AppComponent {
   readonly auth = inject(AuthService);
   readonly customerAuthMode = signal<'login' | 'register' | null>(null);
+  readonly cartOpen = signal(false);
+  readonly addressPanelOpen = signal(false);
+
+  private readonly cartEffect = effect(() => {
+    if (this.auth.isAuthenticated) this.cart.load();
+  });
+  private readonly cart = inject(CartService);
 
   showCustomerLogin(): void { this.customerAuthMode.set('login'); }
+
+  openAddressPanel(): void { this.cartOpen.set(false); this.addressPanelOpen.set(true); }
 
   showCustomerSignup(): void { this.customerAuthMode.set('register'); }
 
