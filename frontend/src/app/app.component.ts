@@ -20,7 +20,7 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
         <a class="brand-mark text-decoration-none" href="/" aria-label="Utsav Crackers home">UTSAV CRACKERS</a>
         <div class="d-flex align-items-center gap-2">
           <button class="btn btn-outline-success btn-sm position-relative" type="button" aria-label="Open shopping cart" (click)="cartOpen.set(true)">
-            <span aria-hidden="true">🛒</span><span class="ms-1">Cart</span>
+            <span aria-hidden="true">🛒</span>
             @if (cart.cart().totalQuantity > 0) { <span class="badge rounded-pill text-bg-success ms-1">{{ cart.cart().totalQuantity }}</span> }
           </button>
           @if (auth.isAuthenticated) {
@@ -66,7 +66,7 @@ export class AppComponent {
   readonly cartOpen = signal(false);
   readonly addressPanelOpen = signal(false);
 
-  private readonly cart = inject(CartService);
+  readonly cart = inject(CartService);
 
   showCustomerLogin(): void { this.customerAuthMode.set('login'); }
 
