@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { of } from 'rxjs';
@@ -16,6 +17,7 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
+        { provide: HttpClient, useValue: { post: jasmine.createSpy('post').and.returnValue(of({})) } },
         { provide: ProductService, useValue: {
           listActive: jasmine.createSpy('listActive').and.returnValue(of([])),
           create: jasmine.createSpy('create').and.returnValue(of({})),
@@ -73,6 +75,6 @@ describe('AppComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('UTSAV CRACKERS');
     expect(fixture.nativeElement.textContent).toContain('Celebrate with care.');
     expect(fixture.nativeElement.textContent).toContain('Explore our products');
-    expect(fixture.nativeElement.textContent).toContain('Sign in');
+    expect(fixture.nativeElement.textContent).toContain('Administrator sign in');
   });
 });
