@@ -80,6 +80,15 @@ public class FireworksJurisdictionPolicy {
     @Column(name = "reviewed_at")
     private Instant reviewedAt;
 
+    @Column(name = "revoked_by", length = 255)
+    private String revokedBy;
+
+    @Column(name = "revoked_at")
+    private Instant revokedAt;
+
+    @Column(name = "revocation_reason", length = 500)
+    private String revocationReason;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -121,11 +130,14 @@ public class FireworksJurisdictionPolicy {
         this.reviewedAt = Instant.now();
     }
 
-    public void revoke() {
+    public void revoke(String actorSubject, String reason) {
         if (status != PolicyStatus.APPROVED) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Only approved policies can be revoked");
         }
         this.status = PolicyStatus.REVOKED;
+        this.revokedBy = actorSubject;
+        this.revokedAt = Instant.now();
+        this.revocationReason = reason.trim();
     }
 
     public boolean isEffectiveAt(Instant instant) {
@@ -171,5 +183,8 @@ public class FireworksJurisdictionPolicy {
     public String getCreatedBy() { return createdBy; }
     public String getReviewedBy() { return reviewedBy; }
     public Instant getReviewedAt() { return reviewedAt; }
+    public String getRevokedBy() { return revokedBy; }
+    public Instant getRevokedAt() { return revokedAt; }
+    public String getRevocationReason() { return revocationReason; }
     public Instant getCreatedAt() { return createdAt; }
 }
