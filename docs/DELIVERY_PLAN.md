@@ -1,0 +1,35 @@
+# Delivery plan
+
+## Phase 1 — Foundation
+- [x] Repository and branch baseline
+- [x] Angular and Spring Boot starter projects
+- [x] MySQL and Keycloak development dependencies
+- [ ] CI build and test workflows
+- [ ] Production Compose and Nginx configuration
+- [ ] Keycloak realm, clients, and role mapping
+
+## Phase 2 — Catalogue and customer experience
+- [ ] Product/category administration and customer catalogue
+- [ ] Product images, pricing, search, and availability
+- [ ] Customer profile and address book
+- [ ] Cart and checkout validation
+
+## Phase 3 — Orders, inventory, and compliance
+- [ ] Inventory ledger and stock reservation
+- [ ] Order lifecycle and cancellation rules
+- [ ] Location/jurisdiction-based fireworks sale and delivery checks
+- [ ] Shipment and delivery tracking
+
+## Phase 4 — Payments
+- [ ] Select and configure provider credentials
+- [ ] Create payment intents server-side
+- [ ] Verify signed webhooks and idempotency
+- [ ] Refunds, reconciliation, and payment audit trail
+
+## Phase 5 — Operations and hardening
+- [ ] Promotions, notifications, and reporting
+- [ ] Security review and dependency scanning
+- [ ] Integration and end-to-end tests
+- [ ] Health checks, backup/restore, and deployment runbooks
+
+Every feature must include migrations, API validation, authorization, tests, and operator documentation. Payment and compliance features must not be enabled in production until provider and legal configurations are reviewed.
