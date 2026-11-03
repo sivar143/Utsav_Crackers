@@ -20,6 +20,7 @@ npm-debug.log*
 .env.*
 !.env.example
 !.env.production.example
+!.env.staging.example
 **/application-local.yml
 
 # Test output
