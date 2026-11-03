@@ -49,6 +49,9 @@ public class Product {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(name = "image_data", columnDefinition = "LONGTEXT")
+    private String imageData;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -62,12 +65,18 @@ public class Product {
 
     public Product(String sku, String name, String description, ProductCategory category,
             BigDecimal price, String currency) {
+        this(sku, name, description, category, price, currency, null);
+    }
+
+    public Product(String sku, String name, String description, ProductCategory category,
+            BigDecimal price, String currency, String imageData) {
         this.sku = sku;
         this.name = name;
         this.description = description;
         this.category = category;
         this.price = price;
         this.currency = currency;
+        this.imageData = imageData;
     }
 
     public void update(String sku, String name, String description, ProductCategory category,
@@ -80,6 +89,12 @@ public class Product {
         this.currency = currency;
     }
 
+    public void update(String sku, String name, String description, ProductCategory category,
+            BigDecimal price, String currency, String imageData) {
+        update(sku, name, description, category, price, currency);
+        this.imageData = imageData;
+    }
+
     public void deactivate() { this.active = false; }
     public UUID getId() { return id; }
     public String getSku() { return sku; }
@@ -89,4 +104,5 @@ public class Product {
     public BigDecimal getPrice() { return price; }
     public String getCurrency() { return currency; }
     public boolean isActive() { return active; }
+    public String getImageData() { return imageData; }
 }
