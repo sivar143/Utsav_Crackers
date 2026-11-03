@@ -46,7 +46,7 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
       <uc-compliance-admin />
       <uc-cart [opened]="cartOpen()" (close)="cartOpen.set(false)" (requestAddress)="openAddressPanel()" />
       @if (addressPanelOpen() && auth.isAuthenticated) {
-        <uc-address-book />
+        <uc-address-book (saved)="onAddressSaved()" />
       }
       <uc-product-catalogue (requestSignIn)="showCustomerLogin()" />
       <section class="border-top pt-3 text-secondary small">
@@ -66,14 +66,16 @@ export class AppComponent {
   readonly cartOpen = signal(false);
   readonly addressPanelOpen = signal(false);
 
+  private readonly cart = inject(CartService);
   private readonly cartEffect = effect(() => {
     if (this.auth.isAuthenticated) this.cart.load();
   });
-  private readonly cart = inject(CartService);
 
   showCustomerLogin(): void { this.customerAuthMode.set('login'); }
 
   openAddressPanel(): void { this.cartOpen.set(false); this.addressPanelOpen.set(true); }
+
+  onAddressSaved(): void { this.addressPanelOpen.set(false); this.cartOpen.set(true); }
 
   showCustomerSignup(): void { this.customerAuthMode.set('register'); }
 
