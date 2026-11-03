@@ -50,7 +50,7 @@ CLIENT_ID=""
 attempt=1
 while [ "$attempt" -le 12 ]; do
   CLIENT_ID=$("$KCADM" get clients -r "$REALM" -q "clientId=utsav-web" 2>/dev/null \
-    | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\\([^"]*\\)".*/\\1/p' | head -n 1) || true
+    | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1) || true
   if [ -n "$CLIENT_ID" ]; then
     break
   fi
