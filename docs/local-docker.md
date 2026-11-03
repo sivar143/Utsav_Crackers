@@ -94,3 +94,17 @@ The last command deletes local MySQL and Keycloak database data. Use it only whe
 ## Separation from deployment environments
 
 Use `compose.local.yml` only for the full local stack. It does not replace or modify `compose.dev.yml`, `compose.staging.yml`, or `compose.prod.yml`. Local credentials and local database volumes are separate from staging and production configuration.
+
+
+## Customer one-time-code sign-in
+
+Customer sign-in and account creation use the storefront's email or phone one-time-code flow. A customer profile and Keycloak CUSTOMER identity are provisioned by the backend after a valid code is verified.
+
+Configure at least one delivery provider in your local `.env.local` before testing OTP sign-in:
+
+- Email: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, and `SMTP_FROM`.
+- SMS: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, and `TWILIO_FROM_NUMBER`.
+
+Restart/rebuild the backend after changing these values. Do not commit `.env.local` or use local development credentials in production. OTPs expire after five minutes, are limited to five verification attempts, and are rate-limited per contact.
+
+The cart is opened from the header cart icon. Checkout checks for a saved address and opens the address form when none exists. This iteration validates the address step; order placement, payment collection, and final shipping quotation require the subsequent order/checkout integration.
