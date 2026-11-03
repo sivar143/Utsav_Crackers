@@ -14,10 +14,11 @@
 - [x] Product/category persistence and public catalogue APIs
 - [x] Admin category and product maintenance APIs
 - [x] Customer-facing product catalogue UI and local API proxy
-- [x] Persistent customer cart API with server-calculated totals
+- [x] Persistent customer cart API and Angular cart summary
+- [x] Customer-owned Indian address book API
+- [ ] Customer address-book UI
 - [ ] Product images, pricing history, search, and availability
-- [ ] Customer profile and address book
-- [ ] Cart UI and checkout validation
+- [ ] Checkout validation
 
 ## Phase 3 — Orders, inventory, and compliance
 - [ ] Inventory ledger and stock reservation

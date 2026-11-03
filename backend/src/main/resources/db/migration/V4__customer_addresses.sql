@@ -1,0 +1,22 @@
+CREATE TABLE customer_addresses (
+    id VARCHAR(36) NOT NULL,
+    customer_subject VARCHAR(255) NOT NULL,
+    label VARCHAR(40) NOT NULL,
+    recipient_name VARCHAR(120) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
+    address_line_1 VARCHAR(180) NOT NULL,
+    address_line_2 VARCHAR(180) NULL,
+    landmark VARCHAR(180) NULL,
+    city VARCHAR(100) NOT NULL,
+    district VARCHAR(100) NOT NULL,
+    state_code VARCHAR(10) NOT NULL,
+    postal_code VARCHAR(10) NOT NULL,
+    country_code CHAR(2) NOT NULL DEFAULT 'IN',
+    is_default BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (id),
+    INDEX idx_customer_addresses_owner (customer_subject, created_at),
+    CONSTRAINT chk_customer_address_country CHECK (country_code = 'IN'),
+    CONSTRAINT chk_customer_address_postal_code CHECK (postal_code REGEXP '^[0-9]{6}$')
+);
