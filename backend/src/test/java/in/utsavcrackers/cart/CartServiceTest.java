@@ -2,10 +2,11 @@ package in.utsavcrackers.cart;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import in.utsavcrackers.catalogue.Product;
-import in.utsavcrackers.catalogue.ProductCategory;
 import in.utsavcrackers.catalogue.ProductRepository;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -28,13 +29,18 @@ class CartServiceTest {
 
     private CartService service;
     private Product product;
+    private UUID productId;
 
     @BeforeEach
     void setUp() {
         service = new CartService(carts, products);
-        ProductCategory category = new ProductCategory("Sparklers", "sparklers");
-        product = new Product("SPK-001", "Electric Sparklers", "Decorative sparklers",
-                category, new BigDecimal("149.50"), "INR");
+        productId = UUID.randomUUID();
+        product = mock(Product.class);
+        when(product.getId()).thenReturn(productId);
+        when(product.getSku()).thenReturn("SPK-001");
+        when(product.getName()).thenReturn("Electric Sparklers");
+        when(product.getPrice()).thenReturn(new BigDecimal("149.50"));
+        when(product.getCurrency()).thenReturn("INR");
     }
 
     @Test
@@ -51,16 +57,14 @@ class CartServiceTest {
 
     @Test
     void calculatesLineAndCartTotalsFromThePersistedProductPrice() {
-        UUID productId = UUID.randomUUID();
-        // The persistence layer supplies the actual product id in normal operation.
         when(products.findByIdAndActiveTrue(productId)).thenReturn(Optional.of(product));
         when(carts.findByCustomerSubject("customer-123")).thenReturn(Optional.empty());
-        when(carts.save(org.mockito.ArgumentMatchers.any(Cart.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(carts.save(any(Cart.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         CartResponse response = service.putItem("customer-123", productId, 3);
 
         assertThat(response.items()).hasSize(1);
+        assertThat(response.items().get(0).productId()).isEqualTo(productId);
         assertThat(response.items().get(0).unitPrice()).isEqualByComparingTo("149.50");
         assertThat(response.items().get(0).lineTotal()).isEqualByComparingTo("448.50");
         assertThat(response.subtotal()).isEqualByComparingTo("448.50");
@@ -76,7 +80,6 @@ class CartServiceTest {
 
     @Test
     void rejectsProductsThatAreNoLongerActive() {
-        UUID productId = UUID.randomUUID();
         when(products.findByIdAndActiveTrue(productId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.putItem("customer-123", productId, 1))
@@ -86,17 +89,16 @@ class CartServiceTest {
 
     @Test
     void rejectsMixedCurrencyCartContents() {
-        UUID productId = UUID.randomUUID();
-        ProductCategory category = new ProductCategory("Fountains", "fountains");
-        Product usdProduct = new Product("FNT-001", "Fountain", null, category,
-                new BigDecimal("5.00"), "USD");
+        UUID usdProductId = UUID.randomUUID();
+        Product usdProduct = mock(Product.class);
+        when(usdProduct.getId()).thenReturn(usdProductId);
+        when(usdProduct.getCurrency()).thenReturn("USD");
         Cart cart = new Cart("customer-123");
-        // Seed the cart through its domain method; no browser-supplied price is accepted.
-        cart.put(new Cart.ProductReference(UUID.randomUUID(), product), 1);
-        when(products.findByIdAndActiveTrue(productId)).thenReturn(Optional.of(usdProduct));
+        cart.put(product, 1);
+        when(products.findByIdAndActiveTrue(usdProductId)).thenReturn(Optional.of(usdProduct));
         when(carts.findByCustomerSubject("customer-123")).thenReturn(Optional.of(cart));
 
-        assertThatThrownBy(() -> service.putItem("customer-123", productId, 1))
+        assertThatThrownBy(() -> service.putItem("customer-123", usdProductId, 1))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("400 BAD_REQUEST");
     }
