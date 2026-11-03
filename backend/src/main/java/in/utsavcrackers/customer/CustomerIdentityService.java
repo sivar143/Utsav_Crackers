@@ -131,6 +131,23 @@ public class CustomerIdentityService {
         }
     }
 
+    public Map<String, Object> refresh(String refreshToken) {
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+        form.add("grant_type", "refresh_token");
+        form.add("client_id", "utsav-web");
+        form.add("refresh_token", refreshToken);
+        try {
+            return http.post()
+                    .uri(keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(form)
+                    .retrieve()
+                    .body(Map.class);
+        } catch (org.springframework.web.client.RestClientException ex) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Customer session expired. Please sign in again.");
+        }
+    }
+
     private String adminToken() {
         if (adminPassword == null || adminPassword.isBlank()) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Customer registration is not configured");
