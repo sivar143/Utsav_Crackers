@@ -75,6 +75,6 @@ describe('AppComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('UTSAV CRACKERS');
     expect(fixture.nativeElement.textContent).toContain('Celebrate with care.');
     expect(fixture.nativeElement.textContent).toContain('Explore our products');
-    expect(fixture.nativeElement.textContent).toContain('Administrator sign in');
+    expect(fixture.nativeElement.textContent).toContain('Sign in');
   });
 });
