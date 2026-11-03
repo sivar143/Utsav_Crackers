@@ -51,7 +51,8 @@ describe('AppComponent', () => {
           create: jasmine.createSpy('create').and.returnValue(of({})),
           update: jasmine.createSpy('update').and.returnValue(of({})),
           makeDefault: jasmine.createSpy('makeDefault').and.returnValue(of({})),
-          remove: jasmine.createSpy('remove').and.returnValue(of(void 0))
+          remove: jasmine.createSpy('remove').and.returnValue(of(void 0)),
+          checkFireworksEligibility: jasmine.createSpy('checkFireworksEligibility').and.returnValue(of({}))
         } }
       ]
     }).compileComponents();
