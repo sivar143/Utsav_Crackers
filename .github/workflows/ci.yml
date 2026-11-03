@@ -69,6 +69,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Validate development Compose file
+        run: docker compose --env-file .env.example -f compose.dev.yml config --quiet
       - name: Validate production Compose file
         run: docker compose --env-file .env.production.example -f compose.prod.yml config --quiet
       - name: Build production application images

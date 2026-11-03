@@ -7,7 +7,7 @@
 - [x] API bearer-token security baseline and Keycloak realm/role import
 - [x] CI workflow and frontend unit-test target
 - [x] Backend tests, MySQL Flyway migration/persistence checks, frontend tests, and production build pass in GitHub Actions
-- [ ] Production Compose and Nginx configuration
+- [x] Separate production Compose, Nginx TLS edge, and application Dockerfiles
 - [ ] Production Keycloak client and secret strategy
 
 ## Phase 2 — Catalogue and customer experience

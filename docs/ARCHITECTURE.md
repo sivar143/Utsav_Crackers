@@ -6,7 +6,7 @@
 - **Spring Boot** owns business rules, authorization, pricing, stock reservations, order transitions, payment state, and delivery eligibility.
 - **MySQL** stores transactional commerce data; Flyway manages schema changes.
 - **Keycloak** provides OIDC identity and realm roles. The API validates bearer JWTs and maps the `ADMIN` and `CUSTOMER` realm roles to Spring authorities.
-- **Nginx** is the deployment edge reverse proxy, not an authentication provider.
+- **Nginx** is the deployment edge reverse proxy and TLS terminator in production, not an authentication provider. The production Compose file keeps databases and application services on private networks.
 - **Payment provider** integration is server-to-server. Browser redirects are never proof of payment.
 
 ## Authentication baseline
@@ -49,4 +49,4 @@
 4. Run the API from `backend` with Java 21 and Maven; the application reads datasource and Keycloak issuer settings from environment variables.
 5. Run the web app from `frontend` with Node.js 22 and npm.
 
-Production deployment configuration will be kept separate. The development Compose file uses Keycloak `start-dev` and must never be used as a production deployment.
+Production deployment uses `compose.prod.yml`, separate application Dockerfiles, and `deploy/nginx/nginx.conf`. The development Compose file uses Keycloak `start-dev` and must never be used as a production deployment.
