@@ -86,10 +86,8 @@ class CartServiceTest {
         UUID inrProductId = UUID.randomUUID();
         UUID usdProductId = UUID.randomUUID();
         Product inrProduct = mock(Product.class);
-        when(inrProduct.getId()).thenReturn(inrProductId);
         when(inrProduct.getCurrency()).thenReturn("INR");
         Product usdProduct = mock(Product.class);
-        when(usdProduct.getId()).thenReturn(usdProductId);
         when(usdProduct.getCurrency()).thenReturn("USD");
         Cart cart = new Cart("customer-123");
         cart.put(inrProduct, 1);
