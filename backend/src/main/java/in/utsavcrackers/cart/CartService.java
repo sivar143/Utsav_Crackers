@@ -28,7 +28,7 @@ public class CartService {
         requireSubject(customerSubject);
         return carts.findByCustomerSubject(customerSubject)
                 .map(this::toResponse)
-                .orElseGet(() -> emptyCart());
+                .orElseGet(this::emptyCart);
     }
 
     @Transactional
@@ -53,7 +53,7 @@ public class CartService {
                     "A cart can contain products in only one currency");
         }
 
-        cart.put(new Cart.ProductReference(product.getId(), product), quantity);
+        cart.put(product, quantity);
         return toResponse(carts.save(cart));
     }
 
