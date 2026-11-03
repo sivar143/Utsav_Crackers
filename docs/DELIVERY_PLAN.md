@@ -6,13 +6,14 @@
 - [x] MySQL and Keycloak development dependencies
 - [x] API bearer-token security baseline and Keycloak realm/role import
 - [x] CI workflow and frontend unit-test target
-- [ ] CI execution verified on GitHub Actions
+- [x] Backend tests and frontend tests/production build pass in GitHub Actions
 - [ ] Production Compose and Nginx configuration
 - [ ] Production Keycloak client and secret strategy
 
 ## Phase 2 — Catalogue and customer experience
-- [ ] Product/category administration and customer catalogue
-- [ ] Product images, pricing, search, and availability
+- [x] Product/category persistence and public catalogue APIs
+- [x] Admin category and product maintenance APIs
+- [ ] Product images, pricing history, search, and availability
 - [ ] Customer profile and address book
 - [ ] Cart and checkout validation
 
