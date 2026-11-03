@@ -100,7 +100,9 @@ export class DeliveryAdminComponent implements OnInit {
       .pipe(finalize(() => this.savingId.set(null)))
       .subscribe({
         next: updated => {
-          this.deliveries.update(values => values.map(value => value.orderId === updated.orderId ? updated : value));
+          this.deliveries.update(values => updated.deliveryStatus === 'DELIVERED'
+            ? values.filter(value => value.orderId !== updated.orderId)
+            : values.map(value => value.orderId === updated.orderId ? updated : value));
           this.success.set(`Delivery ${updated.orderId.slice(0, 8)} updated to ${updated.deliveryStatus.toLowerCase()}.`);
         },
         error: error => {
