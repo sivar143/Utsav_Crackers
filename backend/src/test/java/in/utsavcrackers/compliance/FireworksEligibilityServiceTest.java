@@ -44,9 +44,9 @@ class FireworksEligibilityServiceTest {
     void blocksCheckoutWhenNoApprovedJurisdictionPolicyExists() {
         when(policies.findEffective("IN-AP|*|533001", eq(PolicyStatus.APPROVED), org.mockito.ArgumentMatchers.any()))
                 .thenReturn(java.util.List.of());
-        when(policies.findEffective("IN-AP|east godavari|*", PolicyStatus.APPROVED, org.mockito.ArgumentMatchers.any()))
+        when(policies.findEffective("IN-AP|east godavari|*", eq(PolicyStatus.APPROVED), org.mockito.ArgumentMatchers.any()))
                 .thenReturn(java.util.List.of());
-        when(policies.findEffective("IN-AP|*|*", PolicyStatus.APPROVED, org.mockito.ArgumentMatchers.any()))
+        when(policies.findEffective("IN-AP|*|*", eq(PolicyStatus.APPROVED), org.mockito.ArgumentMatchers.any()))
                 .thenReturn(java.util.List.of());
 
         FireworksEligibilityResponse response = service.check("customer-subject", addressId);
@@ -63,9 +63,9 @@ class FireworksEligibilityServiceTest {
                         true, true, true, false, Instant.parse("2026-01-01T00:00:00Z"),
                         null, "Official order", "Policy notes"), "admin-one");
         districtPolicy.approve("admin-two");
-        when(policies.findEffective("IN-AP|*|533001", org.mockito.ArgumentMatchers.any()))
+        when(policies.findEffective("IN-AP|*|533001", eq(PolicyStatus.APPROVED), org.mockito.ArgumentMatchers.any()))
                 .thenReturn(java.util.List.of());
-        when(policies.findEffective("IN-AP|east godavari|*", org.mockito.ArgumentMatchers.any()))
+        when(policies.findEffective("IN-AP|east godavari|*", eq(PolicyStatus.APPROVED), org.mockito.ArgumentMatchers.any()))
                 .thenReturn(java.util.List.of(districtPolicy));
 
         FireworksEligibilityResponse response = service.check("customer-subject", addressId);
