@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { ProductCatalogueComponent } from './catalogue/product-catalogue.component';
 import { CartComponent } from './cart/cart.component';
 import { CustomerAddressComponent } from './customer-address/customer-address.component';
@@ -22,7 +22,9 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
             <span class="small text-secondary d-none d-sm-inline">{{ auth.username }}</span>
             <button class="btn btn-outline-secondary btn-sm" type="button" (click)="logout()">Sign out</button>
           } @else {
-            <button class="btn btn-outline-success btn-sm" type="button" (click)="adminLogin()">Administrator sign in</button>
+            <button class="btn btn-outline-success btn-sm" type="button" (click)="showCustomerLogin()">Sign in</button>
+            <button class="btn btn-success btn-sm" type="button" (click)="showCustomerSignup()">Sign up</button>
+            <button class="btn btn-link btn-sm text-secondary" type="button" (click)="adminLogin()">Administrator</button>
           }
         </div>
       </header>
@@ -31,7 +33,7 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
         <h1 class="display-5 fw-bold mb-3">Celebrate with care.</h1>
         <p class="lead mb-0">Discover products with transparent pricing and clear fulfilment information.</p>
       </section>
-      <uc-customer-auth />
+      <uc-customer-auth #customerAuth />
       <uc-catalogue-admin />
       <uc-inventory-admin />
       <uc-compliance-admin />
