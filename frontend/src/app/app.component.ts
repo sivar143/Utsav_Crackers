@@ -42,6 +42,7 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
             </div>
           } @else {
             <button class="btn btn-outline-success btn-sm" type="button" (click)="showCustomerLogin()">Sign in</button>
+            <button class="btn btn-success btn-sm" type="button" (click)="showCustomerRegistration()">Sign up</button>
             <button class="btn btn-link btn-sm text-secondary" type="button" (click)="adminLogin()">Administrator</button>
           }
         </div>
@@ -107,6 +108,8 @@ export class AppComponent {
   readonly cart = inject(CartService);
 
   showCustomerLogin(): void { this.customerAuthMode.set('login'); }
+
+  showCustomerRegistration(): void { this.customerAuthMode.set('register'); }
 
   toggleAccountMenu(): void { this.accountMenuOpen.update(value => !value); }
 
