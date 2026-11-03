@@ -6,6 +6,9 @@ import { finalize } from 'rxjs';
 interface AdminDelivery {
   orderId: string;
   customerSubject: string;
+  customerName: string | null;
+  customerEmail: string | null;
+  customerPhone: string | null;
   deliveryAddress: string;
   itemsSnapshot: string;
   amount: number;
@@ -37,12 +40,12 @@ interface AdminDelivery {
       } @else {
         <div class="table-responsive">
           <table class="table table-sm align-middle">
-            <thead><tr><th>Order</th><th>Customer reference</th><th>Delivery address</th><th>Items</th><th class="text-end">Amount</th><th>Status</th><th>Update</th></tr></thead>
+            <thead><tr><th>Order</th><th>Customer</th><th>Delivery address</th><th>Items</th><th class="text-end">Amount</th><th>Status</th><th>Update</th></tr></thead>
             <tbody>
               @for (delivery of deliveries(); track delivery.orderId) {
                 <tr>
                   <td><span class="fw-semibold">{{ delivery.orderId.slice(0, 8) }}</span><div class="small text-secondary">{{ delivery.orderedAt | date:'medium' }}</div></td>
-                  <td class="small text-break">{{ delivery.customerSubject }}</td>
+                  <td class="small"><div class="fw-semibold">{{ delivery.customerName || 'Customer' }}</div>@if (delivery.customerEmail) { <div>{{ delivery.customerEmail }}</div> }@if (delivery.customerPhone) { <div>{{ delivery.customerPhone }}</div> }<div class="text-secondary">Ref: {{ delivery.customerSubject }}</div></td>
                   <td class="small delivery-address">{{ delivery.deliveryAddress }}</td>
                   <td><details><summary>View items</summary><pre class="small items-snapshot mt-2">{{ delivery.itemsSnapshot }}</pre></details></td>
                   <td class="text-end text-nowrap">{{ delivery.amount | currency:delivery.currency:'symbol':'1.2-2' }}</td>
