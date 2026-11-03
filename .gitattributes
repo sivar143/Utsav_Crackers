@@ -1,0 +1,4 @@
+# Preserve Linux-compatible line endings for scripts mounted into containers.
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
