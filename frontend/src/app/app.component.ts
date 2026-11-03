@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { ProductCatalogueComponent } from './catalogue/product-catalogue.component';
 
 @Component({
   selector: 'uc-root',
   standalone: true,
+  imports: [ProductCatalogueComponent],
   template: `
     <main class="container py-5">
       <section class="hero rounded-4 p-4 p-md-5">
@@ -10,9 +12,9 @@ import { Component } from '@angular/core';
         <h1 class="display-5 fw-bold mb-3">Celebrate with care.</h1>
         <p class="lead mb-0">A safer, transparent way to discover products, place orders and track delivery.</p>
       </section>
-      <section class="mt-4">
-        <h2 class="h4">The platform is being prepared</h2>
-        <p class="text-secondary">Catalogue, account access and ordering will be delivered in subsequent modules.</p>
+      <uc-product-catalogue />
+      <section class="border-top pt-3 text-secondary small">
+        Product availability and delivery eligibility will be confirmed before checkout.
       </section>
     </main>
   `,
