@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
 import { signal } from '@angular/core';
+import { of } from 'rxjs';
 import { ProductService } from './catalogue/product.service';
 import { AuthService } from './auth/auth.service';
 import { CartService } from './cart/cart.service';
 import { EMPTY_CART } from './cart/cart.model';
+import { CustomerAddressService } from './customer-address/customer-address.service';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
@@ -27,6 +28,13 @@ describe('AppComponent', () => {
           addOne: jasmine.createSpy('addOne'),
           remove: jasmine.createSpy('remove'),
           clear: jasmine.createSpy('clear')
+        } },
+        { provide: CustomerAddressService, useValue: {
+          list: jasmine.createSpy('list').and.returnValue(of([])),
+          create: jasmine.createSpy('create').and.returnValue(of({})),
+          update: jasmine.createSpy('update').and.returnValue(of({})),
+          makeDefault: jasmine.createSpy('makeDefault').and.returnValue(of({})),
+          remove: jasmine.createSpy('remove').and.returnValue(of(void 0))
         } }
       ]
     }).compileComponents();

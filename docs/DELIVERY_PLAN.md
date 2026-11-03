@@ -15,8 +15,7 @@
 - [x] Admin category and product maintenance APIs
 - [x] Customer-facing product catalogue UI and local API proxy
 - [x] Persistent customer cart API and Angular cart summary
-- [x] Customer-owned Indian address book API
-- [ ] Customer address-book UI
+- [x] Customer-owned Indian address book API and Angular address manager
 - [ ] Product images, pricing history, search, and availability
 - [ ] Checkout validation
 
