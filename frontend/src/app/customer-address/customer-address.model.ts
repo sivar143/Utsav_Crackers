@@ -15,3 +15,16 @@ export interface CustomerAddress {
 }
 
 export type CustomerAddressRequest = Omit<CustomerAddress, 'id' | 'defaultAddress'>;
+
+export interface FireworksEligibilityResponse {
+  addressId: string;
+  policyFound: boolean;
+  saleAllowed: boolean;
+  deliveryAllowed: boolean;
+  transportAllowed: boolean;
+  storageAllowed: boolean;
+  eligibleForCheckout: boolean;
+  policyScope: string;
+  sourceReference: string | null;
+  reason: string;
+}
