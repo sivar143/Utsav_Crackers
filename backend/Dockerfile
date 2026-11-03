@@ -3,7 +3,17 @@ FROM maven:3.9.11-eclipse-temurin-21 AS build
 WORKDIR /workspace
 COPY pom.xml .
 COPY src ./src
-RUN mvn --batch-mode --no-transfer-progress -DskipTests package
+
+# Maven Central can temporarily return 5xx responses. Retry the complete
+# dependency resolution/package step so transient repository outages do not
+# fail an otherwise healthy local Docker build.
+RUN for attempt in 1 2 3 4 5; do \
+      mvn --batch-mode --no-transfer-progress -DskipTests package && exit 0; \
+      status=$?; \
+      if [ "$attempt" -eq 5 ]; then exit "$status"; fi; \
+      echo "Maven build failed (attempt $attempt/5); retrying in $((attempt * 10)) seconds..."; \
+      sleep $((attempt * 10)); \
+    done
 
 FROM eclipse-temurin:21-jre-jammy
 RUN apt-get update \
