@@ -131,6 +131,9 @@ public class CustomerOtpService {
         String subject = subjects.isEmpty() ? createCustomer(channel, contact) : subjects.get(0);
         String temporaryPassword = UUID.randomUUID().toString() + "A9!";
         String adminToken = adminToken();
+        Map<?, ?> keycloakUser = http.get().uri(keycloakUrl + "/admin/realms/" + realm + "/users/" + subject)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken).retrieve().body(Map.class);
+        String username = (String) keycloakUser.get("username");
         http.put().uri(keycloakUrl + "/admin/realms/" + realm + "/users/" + subject + "/reset-password")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -140,7 +143,7 @@ public class CustomerOtpService {
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("grant_type", "password");
         form.add("client_id", "utsav-web");
-        form.add("username", contact);
+        form.add("username", username);
         form.add("password", temporaryPassword);
         try {
             return http.post().uri(keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token")
