@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -25,6 +25,7 @@ interface CustomerTokenResponse {
             <p class="text-secondary small mb-0">Sign in to continue shopping. New to Utsav? You can create an account below.</p>
           </div>
 
+          <button class="btn-close" type="button" aria-label="Close account panel" (click)="close.emit()"></button>
         </div>
 
         @if (message()) {
@@ -101,6 +102,9 @@ interface CustomerTokenResponse {
   `]
 })
 export class CustomerAuthComponent {
+  @Input() set initialMode(value: 'login' | 'register') { this.mode.set(value); }
+  @Output() readonly close = new EventEmitter<void>();
+
   readonly auth = inject(AuthService);
   private readonly http = inject(HttpClient);
   private readonly fb = inject(FormBuilder);
@@ -166,10 +170,6 @@ export class CustomerAuthComponent {
         error: response => this.error.set(response?.error?.detail ?? response?.error?.message ?? 'Sign-in failed. Check your email and password.')
       });
   }
-
-  showLogin(): void { this.mode.set('login'); this.error.set(''); this.message.set(''); }
-
-  showRegistration(): void { this.mode.set('register'); this.error.set(''); this.message.set(''); }
 
   private beginRequest(): void {
     this.error.set('');
