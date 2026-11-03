@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject, signal } from '@angular/core';
 import { catchError, finalize, of } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { CartService } from '../cart/cart.service';
@@ -17,6 +17,7 @@ export class ProductCatalogueComponent implements OnInit {
   private readonly productService = inject(ProductService);
   readonly auth = inject(AuthService);
   readonly cart = inject(CartService);
+  @Output() readonly requestSignIn = new EventEmitter<void>();
 
   readonly products = signal<Product[]>([]);
   readonly loading = signal(true);
@@ -36,7 +37,7 @@ export class ProductCatalogueComponent implements OnInit {
 
   addToCart(product: Product): void {
     if (!this.auth.isAuthenticated) {
-      void this.auth.login();
+      this.requestSignIn.emit();
       return;
     }
     this.cart.addOne(product.id);
