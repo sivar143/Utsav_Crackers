@@ -25,6 +25,11 @@ public class CategoryController {
         return service.listActive();
     }
 
+    @GetMapping("/categories/{id}")
+    public CategoryResponse get(@org.springframework.web.bind.annotation.PathVariable java.util.UUID id) {
+        return service.getActive(id);
+    }
+
     @PostMapping("/admin/categories")
     public ResponseEntity<CategoryResponse> create(@Valid @RequestBody CategoryUpsertRequest request) {
         CategoryResponse response = service.create(request);
