@@ -49,7 +49,22 @@ Wait until MySQL and Keycloak are healthy and the backend and frontend have star
 
 Sign in to the Keycloak administration console with username `admin` and password `admin`. The local `utsav-crackers` realm is imported from `infra/keycloak/realm-export.json`. The Angular app uses the `utsav-web` client and redirects to the local Keycloak URL. Angular API calls under `/api/` are reverse-proxied by Nginx to the backend container.
 
-## 4. Useful commands
+## 4. Customer registration, customer sign-in, and administrator access
+
+The storefront provides its own customer registration and sign-in forms. Customers do not use the Keycloak-hosted login page:
+
+- Registration is posted to `/api/v1/auth/customer/register`. The backend creates the Keycloak identity, assigns only the `CUSTOMER` realm role, and stores the Keycloak subject alongside the customer profile in MySQL.
+- Customer sign-in is posted to `/api/v1/auth/customer/login`. The backend validates the credentials with the Keycloak token endpoint and returns a short-lived access token plus refresh token. Tokens are kept in browser memory and refreshed through the backend; a full page reload signs the customer out.
+- Customer addresses are stored against the authenticated Keycloak subject. Customers can add, edit, delete, and choose a default address.
+- The `/api/v1/admin/**` endpoints require the `ADMIN` realm role. Hiding admin controls in the UI is not the security boundary; the backend enforces the role.
+
+**Existing local Keycloak database:** Realm JSON is imported only when the Keycloak database is first initialized. Since you already started Keycloak, open http://localhost:8081, sign in to the master administration console, select the `utsav-crackers` realm, then open **Clients → utsav-web → Capability config** and enable **Direct access grants**. Save the client. This enables the backend-mediated customer login API; customers still use the storefront form and are not redirected to the Keycloak login page.
+
+**Create the application administrator once:** In the `utsav-crackers` realm, open **Users → Create new user**. Create a dedicated administrator user, enable it, set a password under **Credentials**, then open **Role mapping → Assign role** and assign the realm role `ADMIN`. Use this account with the **Administrator sign in** button on the storefront. The master-realm console administrator is not automatically an application administrator.
+
+The local backend uses the local Keycloak bootstrap administrator credentials from `.env.local` to provision customers. They are passed only to the backend container and must remain local-only. For a real deployment, replace this with a dedicated Keycloak service account restricted to the minimum user-management and role-assignment permissions. The custom storefront password form uses Keycloak Direct Access Grants (password grant); this legacy OAuth flow is not recommended for public production systems. Before production, replace it with a BFF-based Authorization Code + PKCE flow and a branded Keycloak theme or another supported identity flow, without exposing Keycloak administrative credentials to the browser.
+
+## 5. Useful commands
 
 Run from the repository root, using the same Compose options:
 
@@ -69,7 +84,7 @@ docker compose --env-file .env.local -f compose.local.yml down -v
 
 The last command deletes local MySQL and Keycloak database data. Use it only when you intentionally want a completely fresh local environment. After deleting the Keycloak database volume, the realm import runs again on the next startup.
 
-## 5. Troubleshooting
+## 6. Troubleshooting
 
 - If Docker reports that ports 3306, 4200, 8080, or 8081 are already in use, stop the other process or change the corresponding host-side port in `compose.local.yml`.
 - If you change a database password after the database volume has already been initialized, the new environment value does not rewrite the existing database user's password. For a disposable fresh local database, run `down -v` and start the stack again.
