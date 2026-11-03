@@ -21,9 +21,10 @@
 
 ## Phase 3 — Orders, inventory, and compliance
 - [x] Inventory balance and append-only adjustment ledger API and admin UI
+- [x] Default-deny, source-backed, two-person-approved jurisdiction policy framework
+- [ ] Product-specific restrictions, storage licensing, and carrier dangerous-goods checks
 - [ ] Purchase receiving, lot tracking, and warehouse transfers
 - [ ] Stock reservations and order lifecycle
-- [ ] Location/jurisdiction-based fireworks sale and delivery checks
 - [ ] Shipment and delivery tracking
 
 ## Phase 4 — Payments
