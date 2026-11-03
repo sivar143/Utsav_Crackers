@@ -119,6 +119,9 @@ import { CustomerAddressService } from './customer-address.service';
                 <input class="form-control" value="India" readonly>
               </div>
             </div>
+            @if (form.invalid && form.touched) {
+              <p class="small text-danger mt-3 mb-0" role="alert">Please complete the required fields. Use an international phone number and a valid 6-digit PIN code.</p>
+            }
             <div class="d-flex flex-wrap gap-2 mt-3">
               <button class="btn btn-success" type="submit" [disabled]="form.invalid || saving()">
                 {{ saving() ? 'Saving…' : (editingId() ? 'Save changes' : 'Save address') }}
@@ -165,7 +168,7 @@ export class CustomerAddressComponent implements OnInit {
     { code: 'IN-RJ', name: 'Rajasthan' }, { code: 'IN-SK', name: 'Sikkim' },
     { code: 'IN-TN', name: 'Tamil Nadu' }, { code: 'IN-TS', name: 'Telangana' },
     { code: 'IN-TR', name: 'Tripura' }, { code: 'IN-UP', name: 'Uttar Pradesh' },
-    { code: 'IN-UK', name: 'Uttarakhand' }, { code: 'IN-WB', name: 'West Bengal' },
+    { code: 'IN-UT', name: 'Uttarakhand' }, { code: 'IN-WB', name: 'West Bengal' },
     { code: 'IN-AN', name: 'Andaman and Nicobar Islands' }, { code: 'IN-CH', name: 'Chandigarh' },
     { code: 'IN-DH', name: 'Dadra and Nagar Haveli and Daman and Diu' },
     { code: 'IN-DL', name: 'Delhi' }, { code: 'IN-JK', name: 'Jammu and Kashmir' },
