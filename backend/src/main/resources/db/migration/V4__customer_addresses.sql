@@ -11,7 +11,7 @@ CREATE TABLE customer_addresses (
     district VARCHAR(100) NOT NULL,
     state_code VARCHAR(10) NOT NULL,
     postal_code VARCHAR(10) NOT NULL,
-    country_code CHAR(2) NOT NULL DEFAULT 'IN',
+    country_code VARCHAR(2) NOT NULL DEFAULT 'IN',
     is_default BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     updated_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
