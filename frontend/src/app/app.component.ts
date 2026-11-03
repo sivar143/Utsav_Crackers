@@ -1,4 +1,4 @@
-import { Component, ViewChild, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ProductCatalogueComponent } from './catalogue/product-catalogue.component';
 import { CartComponent } from './cart/cart.component';
 import { CustomerAddressComponent } from './customer-address/customer-address.component';
@@ -33,7 +33,9 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
         <h1 class="display-5 fw-bold mb-3">Celebrate with care.</h1>
         <p class="lead mb-0">Discover products with transparent pricing and clear fulfilment information.</p>
       </section>
-      <uc-customer-auth #customerAuth />
+      @if (customerAuthMode(); as authMode) {
+        <uc-customer-auth [initialMode]="authMode" (close)="closeCustomerAuth()" />
+      }
       <uc-catalogue-admin />
       <uc-inventory-admin />
       <uc-compliance-admin />
@@ -53,11 +55,13 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
 })
 export class AppComponent {
   readonly auth = inject(AuthService);
-  @ViewChild(CustomerAuthComponent) private customerAuth?: CustomerAuthComponent;
+  readonly customerAuthMode = signal<'login' | 'register' | null>(null);
 
-  showCustomerLogin(): void { this.customerAuth?.showLogin(); }
+  showCustomerLogin(): void { this.customerAuthMode.set('login'); }
 
-  showCustomerSignup(): void { this.customerAuth?.showRegistration(); }
+  showCustomerSignup(): void { this.customerAuthMode.set('register'); }
+
+  closeCustomerAuth(): void { this.customerAuthMode.set(null); }
 
   adminLogin(): void {
     void this.auth.login();
