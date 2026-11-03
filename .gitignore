@@ -1,0 +1,25 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Java
+**/target/
+*.class
+*.log
+
+# Angular / Node
+**/node_modules/
+**/dist/
+**/.angular/
+npm-debug.log*
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+**/application-local.yml
+
+# Test output
+**/coverage/
