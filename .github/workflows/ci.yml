@@ -64,7 +64,7 @@ jobs:
           node -e "const report = require('./npm-audit.json'); Object.entries(report.vulnerabilities || {}).forEach(([name, item]) => console.log(name + ': ' + item.severity + '; fix=' + JSON.stringify(item.fixAvailable) + '; via=' + item.via.map(issue => typeof issue === 'string' ? issue : issue.title).join(', ')));"
       - name: Run frontend tests
         working-directory: frontend
-        run: npm test
+        run: npm test -- --browsers=ChromeHeadless
       - name: Build production frontend
         working-directory: frontend
         run: npm run build

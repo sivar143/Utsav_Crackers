@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { of } from 'rxjs';
 import { ProductService } from './catalogue/product.service';
 import { AuthService } from './auth/auth.service';
@@ -10,12 +9,12 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
-        { provide: ProductService, useValue: { listActive: vi.fn(() => of([])) } },
+        { provide: ProductService, useValue: { listActive: jasmine.createSpy('listActive').and.returnValue(of([])) } },
         { provide: AuthService, useValue: {
           isAuthenticated: false,
           username: null,
-          login: vi.fn(),
-          logout: vi.fn()
+          login: jasmine.createSpy('login'),
+          logout: jasmine.createSpy('logout')
         } }
       ]
     }).compileComponents();
