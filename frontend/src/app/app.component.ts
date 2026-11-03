@@ -1,6 +1,7 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { ProductCatalogueComponent } from './catalogue/product-catalogue.component';
 import { CartComponent } from './cart/cart.component';
+import { CartService } from './cart/cart.service';
 import { CustomerAddressComponent } from './customer-address/customer-address.component';
 import { CatalogueAdminComponent } from './admin/catalogue-admin.component';
 import { InventoryAdminComponent } from './inventory/inventory-admin.component';
@@ -47,7 +48,7 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
       @if (addressPanelOpen() && auth.isAuthenticated) {
         <uc-address-book />
       }
-      <uc-product-catalogue />
+      <uc-product-catalogue (requestSignIn)="showCustomerLogin()" />
       <section class="border-top pt-3 text-secondary small">
         Product availability and delivery eligibility will be confirmed before checkout.
       </section>
