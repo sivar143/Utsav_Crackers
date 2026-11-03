@@ -155,6 +155,14 @@ class ProductCataloguePersistenceTest {
 
         assertThat(restored.getReviewedBy()).isEqualTo("admin-reviewer");
         assertThat(restored.getStatus()).isEqualTo(PolicyStatus.APPROVED);
+        assertThat(fireworksPolicies.findEffective(restored.getScopeKey(), PolicyStatus.APPROVED,
+                java.time.Instant.now())).hasSize(1);
+
+        restored.revoke("admin-revoker", "Superseded by a newer legal order");
+        fireworksPolicies.flush();
+        assertThat(restored.getRevokedBy()).isEqualTo("admin-revoker");
+        assertThat(restored.getRevocationReason()).isEqualTo("Superseded by a newer legal order");
+        assertThat(restored.getStatus()).isEqualTo(PolicyStatus.REVOKED);
     }
 
 }
