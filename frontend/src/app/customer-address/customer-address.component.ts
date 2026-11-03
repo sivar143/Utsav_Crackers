@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
@@ -154,7 +154,7 @@ import { CustomerAddressService } from './customer-address.service';
     .saved-address { border: 1px solid #e4e9e5; border-radius: .85rem; padding: 1rem; }
   `]
 })
-export class CustomerAddressComponent implements OnInit {
+export class CustomerAddressComponent {
   readonly auth = inject(AuthService);
   private readonly addressService = inject(CustomerAddressService);
   private readonly fb = inject(FormBuilder);
@@ -167,6 +167,11 @@ export class CustomerAddressComponent implements OnInit {
   readonly pendingDeleteId = signal<string | null>(null);
   readonly checkingAddressId = signal<string | null>(null);
   readonly eligibilityResults = signal<Record<string, FireworksEligibilityResponse>>({});
+
+  // The address component is mounted for guests too; react when the customer signs in.
+  private readonly authEffect = effect(() => {
+    if (this.auth.isAuthenticated) this.load();
+  });
 
   readonly states = [
     { code: 'IN-AP', name: 'Andhra Pradesh' }, { code: 'IN-AR', name: 'Arunachal Pradesh' },
