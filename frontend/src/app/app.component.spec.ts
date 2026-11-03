@@ -7,6 +7,7 @@ import { AuthService } from './auth/auth.service';
 import { CartService } from './cart/cart.service';
 import { EMPTY_CART } from './cart/cart.model';
 import { CustomerAddressService } from './customer-address/customer-address.service';
+import { InventoryService } from './inventory/inventory.service';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
@@ -23,6 +24,11 @@ describe('AppComponent', () => {
         { provide: CategoryService, useValue: {
           listActive: jasmine.createSpy('listActive').and.returnValue(of([])),
           create: jasmine.createSpy('create').and.returnValue(of({}))
+        } },
+        { provide: InventoryService, useValue: {
+          listBalances: jasmine.createSpy('listBalances').and.returnValue(of([])),
+          adjust: jasmine.createSpy('adjust').and.returnValue(of({})),
+          listMovements: jasmine.createSpy('listMovements').and.returnValue(of([]))
         } },
         { provide: AuthService, useValue: {
           isAuthenticated: false,

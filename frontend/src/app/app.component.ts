@@ -3,12 +3,13 @@ import { ProductCatalogueComponent } from './catalogue/product-catalogue.compone
 import { CartComponent } from './cart/cart.component';
 import { CustomerAddressComponent } from './customer-address/customer-address.component';
 import { CatalogueAdminComponent } from './admin/catalogue-admin.component';
+import { InventoryAdminComponent } from './inventory/inventory-admin.component';
 import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'uc-root',
   standalone: true,
-  imports: [ProductCatalogueComponent, CartComponent, CustomerAddressComponent, CatalogueAdminComponent],
+  imports: [ProductCatalogueComponent, CartComponent, CustomerAddressComponent, CatalogueAdminComponent, InventoryAdminComponent],
   template: `
     <main class="container py-4 py-md-5">
       <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
@@ -28,6 +29,7 @@ import { AuthService } from './auth/auth.service';
         <p class="lead mb-0">Discover products with transparent pricing and clear fulfilment information.</p>
       </section>
       <uc-catalogue-admin />
+      <uc-inventory-admin />
       <uc-cart />
       <uc-address-book />
       <uc-product-catalogue />

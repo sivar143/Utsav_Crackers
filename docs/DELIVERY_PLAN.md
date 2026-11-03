@@ -20,7 +20,7 @@
 - [ ] Checkout validation
 
 ## Phase 3 — Orders, inventory, and compliance
-- [x] Inventory balance and append-only adjustment ledger API
+- [x] Inventory balance and append-only adjustment ledger API and admin UI
 - [ ] Purchase receiving, lot tracking, and warehouse transfers
 - [ ] Stock reservations and order lifecycle
 - [ ] Location/jurisdiction-based fireworks sale and delivery checks
