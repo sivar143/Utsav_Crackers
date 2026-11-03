@@ -29,7 +29,7 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
           @if (auth.isAuthenticated) {
             <div class="account-menu" (mouseenter)="accountMenuOpen.set(true)" (mouseleave)="accountMenuOpen.set(false)" (focusin)="accountMenuOpen.set(true)" (focusout)="closeAccountMenu($event)">
               <button class="btn btn-outline-secondary btn-sm account-trigger" type="button" aria-haspopup="true"
-                [attr.aria-expanded]="accountMenuOpen()" (click)="toggleAccountMenu()">
+                [attr.aria-expanded]="accountMenuOpen()" (click)="openAccountMenu()">
                 {{ auth.username || 'My account' }} <span aria-hidden="true">▾</span>
               </button>
               @if (accountMenuOpen()) {
@@ -111,7 +111,7 @@ export class AppComponent {
 
   showCustomerRegistration(): void { this.customerAuthMode.set('register'); }
 
-  toggleAccountMenu(): void { this.accountMenuOpen.update(value => !value); }
+  openAccountMenu(): void { this.accountMenuOpen.set(true); }
 
   openAddressPanel(returnToCart = false): void {
     this.accountMenuOpen.set(false);
