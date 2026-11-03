@@ -12,7 +12,7 @@
 
 ## Phase 2 — Catalogue and customer experience
 - [x] Product/category persistence and public catalogue APIs
-- [x] Admin category and product maintenance APIs
+- [x] Admin category and product maintenance APIs and Angular UI
 - [x] Customer-facing product catalogue UI and local API proxy
 - [x] Persistent customer cart API and Angular cart summary
 - [x] Customer-owned Indian address book API and Angular address manager

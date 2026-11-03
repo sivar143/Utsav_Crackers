@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import { ProductService } from './catalogue/product.service';
+import { CategoryService } from './catalogue/category.service';
 import { AuthService } from './auth/auth.service';
 import { CartService } from './cart/cart.service';
 import { EMPTY_CART } from './cart/cart.model';
@@ -13,10 +14,20 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
-        { provide: ProductService, useValue: { listActive: jasmine.createSpy('listActive').and.returnValue(of([])) } },
+        { provide: ProductService, useValue: {
+          listActive: jasmine.createSpy('listActive').and.returnValue(of([])),
+          create: jasmine.createSpy('create').and.returnValue(of({})),
+          update: jasmine.createSpy('update').and.returnValue(of({})),
+          deactivate: jasmine.createSpy('deactivate').and.returnValue(of(void 0))
+        } },
+        { provide: CategoryService, useValue: {
+          listActive: jasmine.createSpy('listActive').and.returnValue(of([])),
+          create: jasmine.createSpy('create').and.returnValue(of({}))
+        } },
         { provide: AuthService, useValue: {
           isAuthenticated: false,
           username: null,
+          hasRole: jasmine.createSpy('hasRole').and.returnValue(false),
           login: jasmine.createSpy('login'),
           logout: jasmine.createSpy('logout')
         } },

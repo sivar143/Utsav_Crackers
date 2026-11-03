@@ -2,12 +2,13 @@ import { Component, inject } from '@angular/core';
 import { ProductCatalogueComponent } from './catalogue/product-catalogue.component';
 import { CartComponent } from './cart/cart.component';
 import { CustomerAddressComponent } from './customer-address/customer-address.component';
+import { CatalogueAdminComponent } from './admin/catalogue-admin.component';
 import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'uc-root',
   standalone: true,
-  imports: [ProductCatalogueComponent, CartComponent, CustomerAddressComponent],
+  imports: [ProductCatalogueComponent, CartComponent, CustomerAddressComponent, CatalogueAdminComponent],
   template: `
     <main class="container py-4 py-md-5">
       <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
@@ -26,6 +27,7 @@ import { AuthService } from './auth/auth.service';
         <h1 class="display-5 fw-bold mb-3">Celebrate with care.</h1>
         <p class="lead mb-0">Discover products with transparent pricing and clear fulfilment information.</p>
       </section>
+      <uc-catalogue-admin />
       <uc-cart />
       <uc-address-book />
       <uc-product-catalogue />
