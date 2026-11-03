@@ -2,8 +2,8 @@ package in.utsavcrackers.security;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,15 +23,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-
     @Bean
     SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
         return http
-                // The API is stateless and authenticates bearer tokens; browser sessions are not used.
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/health", "/actuator/health", "/actuator/health/**").permitAll()
+                        // Customer registration and sign-in are intentionally served by the branded storefront.
+                        .requestMatchers("/api/v1/auth/customer/**").permitAll()
                         .requestMatchers("/api/v1/products", "/api/v1/products/**", "/api/v1/categories", "/api/v1/categories/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/customer/**").hasAnyRole("CUSTOMER", "ADMIN")
@@ -50,16 +50,10 @@ public class SecurityConfig {
 
     private Collection<GrantedAuthority> extractRealmRoles(Jwt jwt) {
         Object realmAccessClaim = jwt.getClaims().get("realm_access");
-        if (!(realmAccessClaim instanceof Map<?, ?> realmAccess)) {
-            return List.of();
-        }
+        if (!(realmAccessClaim instanceof Map<?, ?> realmAccess)) return List.of();
         Object rolesClaim = realmAccess.get("roles");
-        if (!(rolesClaim instanceof Collection<?> roles)) {
-            return List.of();
-        }
-        return roles.stream()
-                .filter(String.class::isInstance)
-                .map(String.class::cast)
+        if (!(rolesClaim instanceof Collection<?> roles)) return List.of();
+        return roles.stream().filter(String.class::isInstance).map(String.class::cast)
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase(Locale.ROOT)))
                 .collect(Collectors.toUnmodifiableSet());
     }
