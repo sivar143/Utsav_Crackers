@@ -30,8 +30,8 @@ public class AdminDeliveryController {
     @Transactional(readOnly = true)
     public List<AdminDeliveryResponse> listPaidOrders() {
         return orders.findAllByPaymentStatusOrderByCreatedAtDesc("PAID").stream()
-                .map(order -> new AdminDeliveryResponse(order.getId(), order.getCustomerSubject(),
-                        order.getDeliveryAddressSnapshot(), order.getItemsSnapshot(), order.getAmount(),
+                .map(order -> new AdminDeliveryResponse(order.getId(), order.getCustomerSubject(), order.getCustomerName(),
+                        order.getCustomerEmail(), order.getCustomerPhone(), order.getDeliveryAddressSnapshot(), order.getItemsSnapshot(), order.getAmount(),
                         order.getCurrency(), order.getPaymentMethod(), order.getCreatedAt(),
                         order.getDeliveryStatus()))
                 .toList();
@@ -50,8 +50,8 @@ public class AdminDeliveryController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Only paid orders can enter the delivery queue.");
         }
         order.updateDeliveryStatus(request.status());
-        return new AdminDeliveryResponse(order.getId(), order.getCustomerSubject(),
-                order.getDeliveryAddressSnapshot(), order.getItemsSnapshot(), order.getAmount(),
+        return new AdminDeliveryResponse(order.getId(), order.getCustomerSubject(), order.getCustomerName(),
+                order.getCustomerEmail(), order.getCustomerPhone(), order.getDeliveryAddressSnapshot(), order.getItemsSnapshot(), order.getAmount(),
                 order.getCurrency(), order.getPaymentMethod(), order.getCreatedAt(),
                 order.getDeliveryStatus());
     }
