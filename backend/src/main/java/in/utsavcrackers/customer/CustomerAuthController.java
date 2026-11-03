@@ -25,6 +25,15 @@ public class CustomerAuthController {
                 .body(identity.register(request));
     }
 
+    @PostMapping("/refresh")
+    public Map<String, Object> refresh(@RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token is required");
+        }
+        return identity.refresh(refreshToken);
+    }
+
     @PostMapping("/login")
     public Map<String, Object> login(@Valid @RequestBody CustomerLoginRequest request) {
         return identity.login(request);
