@@ -179,7 +179,7 @@ export class CustomerAddressComponent implements OnInit {
   readonly form = this.fb.nonNullable.group({
     label: ['Home', [Validators.required, Validators.maxLength(40)]],
     recipientName: ['', [Validators.required, Validators.maxLength(120)]],
-    phoneNumber: ['', [Validators.required, Validators.pattern(/^\\+?[1-9][0-9]{7,14}$/)]],
+    phoneNumber: ['', [Validators.required, Validators.pattern(/^\+?[1-9][0-9]{7,14}$/)]],
     addressLine1: ['', [Validators.required, Validators.maxLength(180)]],
     addressLine2: ['', Validators.maxLength(180)],
     landmark: ['', Validators.maxLength(180)],
