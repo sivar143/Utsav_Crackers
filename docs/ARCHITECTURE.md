@@ -5,9 +5,18 @@
 - **Angular** serves the customer storefront and protected administration workflows.
 - **Spring Boot** owns business rules, authorization, pricing, stock reservations, order transitions, payment state, and delivery eligibility.
 - **MySQL** stores transactional commerce data; Flyway manages schema changes.
-- **Keycloak** provides OIDC identity and role claims. The API validates access tokens.
+- **Keycloak** provides OIDC identity and realm roles. The API validates bearer JWTs and maps the `ADMIN` and `CUSTOMER` realm roles to Spring authorities.
 - **Nginx** is the deployment edge reverse proxy, not an authentication provider.
 - **Payment provider** integration is server-to-server. Browser redirects are never proof of payment.
+
+## Authentication baseline
+
+- Local Keycloak realm import is stored in `infra/keycloak/realm-export.json`.
+- The browser client is a public OIDC client using authorization-code flow with PKCE S256; direct access grants and implicit flow are disabled.
+- The API uses the realm issuer URL from `KEYCLOAK_ISSUER_URI`.
+- `/api/v1/health` and actuator health are public. `/api/v1/admin/**` requires `ADMIN`; `/api/v1/customer/**` requires `CUSTOMER` or `ADMIN`; other versioned API routes require authentication.
+- Customer ownership checks must still be implemented in each application service. A role is not proof of ownership.
+- Production must use HTTPS, restricted redirect origins, managed secrets, and a separately reviewed Keycloak configuration. The local realm is not production-ready.
 
 ## Core modules
 
@@ -32,4 +41,10 @@
 
 ## Local development
 
-Copy `.env.example` to `.env` for reference, replace all sample credentials, then start dependencies with `docker compose -f compose.dev.yml up -d`. Run the API with Java 21 and Maven from `backend`, and the web app with Node.js and npm from `frontend`. Production deployment configuration will be kept separate.
+1. Copy `.env.example` to `.env` and replace every sample password.
+2. Keep `SPRING_DATASOURCE_PASSWORD` equal to `MYSQL_PASSWORD` in that local file.
+3. Start dependencies with `docker compose -f compose.dev.yml up -d`.
+4. Run the API from `backend` with Java 21 and Maven; the application reads datasource and Keycloak issuer settings from environment variables.
+5. Run the web app from `frontend` with Node.js 22 and npm.
+
+Production deployment configuration will be kept separate. The development Compose file uses Keycloak `start-dev` and must never be used as a production deployment.

@@ -4,9 +4,11 @@
 - [x] Repository and branch baseline
 - [x] Angular and Spring Boot starter projects
 - [x] MySQL and Keycloak development dependencies
-- [ ] CI build and test workflows
+- [x] API bearer-token security baseline and Keycloak realm/role import
+- [x] CI workflow and frontend unit-test target
+- [ ] CI execution verified on GitHub Actions
 - [ ] Production Compose and Nginx configuration
-- [ ] Keycloak realm, clients, and role mapping
+- [ ] Production Keycloak client and secret strategy
 
 ## Phase 2 — Catalogue and customer experience
 - [ ] Product/category administration and customer catalogue
