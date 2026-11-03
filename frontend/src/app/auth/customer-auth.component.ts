@@ -54,7 +54,13 @@ interface CustomerTokenResponse {
               </div>
               <div class="col-12 col-md-6">
                 <label class="form-label" for="customer-phone">Mobile number</label>
-                <input id="customer-phone" class="form-control" formControlName="phoneNumber" autocomplete="tel" placeholder="+919876543210">
+                <input id="customer-phone" class="form-control" formControlName="phoneNumber" autocomplete="tel" placeholder="+919876543210" [class.is-invalid]="registrationForm.controls.phoneNumber.touched && registrationForm.controls.phoneNumber.invalid" aria-describedby="customer-phone-help">
+                <div id="customer-phone-help" class="form-text">Enter 8–15 digits, optionally starting with + and country code.</div>
+                @if (registrationForm.controls.phoneNumber.touched && registrationForm.controls.phoneNumber.hasError('required')) {
+                  <div class="invalid-feedback d-block">Mobile number is required.</div>
+                } @else if (registrationForm.controls.phoneNumber.touched && registrationForm.controls.phoneNumber.hasError('pattern')) {
+                  <div class="invalid-feedback d-block">Enter a valid international mobile number, for example +918143697143.</div>
+                }
               </div>
               <div class="col-12 col-md-6">
                 <label class="form-label" for="customer-register-password">Password</label>
@@ -106,7 +112,7 @@ export class CustomerAuthComponent {
     firstName: ['', [Validators.required, Validators.maxLength(100)]],
     lastName: ['', Validators.maxLength(100)],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
-    phoneNumber: ['', [Validators.required, Validators.pattern(/^\\+?[1-9][0-9]{7,14}$/)]],
+    phoneNumber: ['', [Validators.required, Validators.pattern(/^\+?[1-9][0-9]{7,14}$/)]],
     password: ['', [Validators.required, Validators.minLength(12), Validators.maxLength(72)]],
     confirmPassword: ['', Validators.required]
   });
