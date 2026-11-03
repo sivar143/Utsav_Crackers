@@ -3,7 +3,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
-import { CustomerAddress, CustomerAddressRequest } from './customer-address.model';
+import { CustomerAddress, CustomerAddressRequest, FireworksEligibilityResponse } from './customer-address.model';
 import { CustomerAddressService } from './customer-address.service';
 
 @Component({
@@ -52,6 +52,9 @@ import { CustomerAddressService } from './customer-address.service';
                     @if (!address.defaultAddress) {
                       <button class="btn btn-sm btn-outline-success" type="button" (click)="setDefault(address.id)">Make default</button>
                     }
+                    <button class="btn btn-sm btn-outline-secondary" type="button" [disabled]="checkingAddressId() === address.id" (click)="checkEligibility(address.id)">
+                      {{ checkingAddressId() === address.id ? 'Checking…' : 'Check location policy' }}
+                    </button>
                     <button class="btn btn-sm btn-outline-secondary" type="button" (click)="edit(address)">Edit</button>
                     @if (pendingDeleteId() === address.id) {
                       <button class="btn btn-sm btn-danger" type="button" [disabled]="saving()" (click)="confirmDelete(address.id)">Confirm delete</button>
@@ -60,6 +63,15 @@ import { CustomerAddressService } from './customer-address.service';
                       <button class="btn btn-sm btn-link text-secondary" type="button" (click)="pendingDeleteId.set(address.id)">Delete</button>
                     }
                   </div>
+                  @if (eligibilityResults()[address.id]; as result) {
+                    <div class="small mt-3 p-2 rounded" [class.bg-success-subtle]="result.eligibleForCheckout" [class.bg-warning-subtle]="!result.eligibleForCheckout">
+                      <div class="fw-semibold">{{ result.eligibleForCheckout ? 'Address-level policy passed' : 'Checkout blocked by address policy' }}</div>
+                      <div>{{ result.reason }}</div>
+                      @if (result.sourceReference) {
+                        <div class="text-secondary mt-1">Policy source: {{ result.sourceReference }}</div>
+                      }
+                    </div>
+                  }
                 </article>
               </div>
             }
@@ -153,6 +165,8 @@ export class CustomerAddressComponent implements OnInit {
   readonly error = signal('');
   readonly editingId = signal<string | null>(null);
   readonly pendingDeleteId = signal<string | null>(null);
+  readonly checkingAddressId = signal<string | null>(null);
+  readonly eligibilityResults = signal<Record<string, FireworksEligibilityResponse>>({});
 
   readonly states = [
     { code: 'IN-AP', name: 'Andhra Pradesh' }, { code: 'IN-AR', name: 'Arunachal Pradesh' },
@@ -224,6 +238,17 @@ export class CustomerAddressComponent implements OnInit {
       },
       error: () => this.error.set('The address could not be saved. Check the details and try again.')
     });
+  }
+
+  checkEligibility(addressId: string): void {
+    this.checkingAddressId.set(addressId);
+    this.error.set('');
+    this.addressService.checkFireworksEligibility(addressId)
+      .pipe(finalize(() => this.checkingAddressId.set(null)))
+      .subscribe({
+        next: result => this.eligibilityResults.update(current => ({ ...current, [addressId]: result })),
+        error: () => this.error.set('The address policy check could not be completed. Please try again.')
+      });
   }
 
   edit(address: CustomerAddress): void {
