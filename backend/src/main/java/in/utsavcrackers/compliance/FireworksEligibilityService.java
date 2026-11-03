@@ -56,7 +56,7 @@ public class FireworksEligibilityService {
         String stateScope = state + "|*|*";
 
         for (String scope : List.of(pinScope, districtScope, stateScope)) {
-            List<FireworksJurisdictionPolicy> matches = policies.findEffective(scope, now);
+            List<FireworksJurisdictionPolicy> matches = policies.findEffective(scope, PolicyStatus.APPROVED, now);
             if (!matches.isEmpty()) {
                 return matches.get(0);
             }
