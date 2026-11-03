@@ -84,4 +84,19 @@ class FireworksPolicyServiceTest {
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("409 CONFLICT");
     }
+    @Test
+    void recordsTheAdministratorAndReasonWhenRevokingPolicy() {
+        FireworksJurisdictionPolicy policy = new FireworksJurisdictionPolicy(request, "admin-one");
+        policy.approve("admin-two");
+        UUID id = UUID.randomUUID();
+        when(policies.findById(id)).thenReturn(Optional.of(policy));
+
+        FireworksPolicyResponse response = service.revoke("admin-three", id, "Superseded by a newer order");
+
+        assertThat(response.status()).isEqualTo(PolicyStatus.REVOKED);
+        assertThat(response.revokedBy()).isEqualTo("admin-three");
+        assertThat(response.revocationReason()).isEqualTo("Superseded by a newer order");
+        assertThat(response.revokedAt()).isNotNull();
+    }
+
 }
