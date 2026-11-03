@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/health", "/actuator/health", "/actuator/health/**").permitAll()
                         // Customer registration and sign-in are intentionally served by the branded storefront.
                         .requestMatchers("/api/v1/auth/customer/**").permitAll()
+                        .requestMatchers("/api/v1/customer/payments/webhook").permitAll()
                         .requestMatchers("/api/v1/products", "/api/v1/products/**", "/api/v1/categories", "/api/v1/categories/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/customer/**").hasAnyRole("CUSTOMER", "ADMIN")
