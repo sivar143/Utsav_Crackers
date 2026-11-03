@@ -4,6 +4,8 @@ The compliance module is deliberately **default-deny**. It does not infer that f
 
 ## Administrator workflow
 
+Administrators can create drafts, inspect the policy register, approve policies created by another administrator, and revoke approved policies with a recorded reason through the Angular admin console.
+
 1. Create a draft jurisdiction policy for a state, district, or six-digit PIN code.
 2. Include a source reference to the applicable official order, notification, licence condition, or other reviewed legal instrument, plus legal notes and an effective period.
 3. A different administrator must approve the draft. The creator cannot approve their own policy.
@@ -18,7 +20,7 @@ The compliance module is deliberately **default-deny**. It does not infer that f
 - `PUT /api/v1/admin/compliance/policies/{id}/revoke` with `{"reason":"Superseded by a newer order"}`
 - `POST /api/v1/customer/compliance/eligibility-check` with `{"addressId":"..." }`
 
-The eligibility check selects the most specific approved and effective policy: PIN code, then district, then state. It returns separate sale, delivery, transport, and storage flags. Checkout eligibility requires sale, delivery, and transport permission.
+Customers can run the address-level check from their saved address card. The eligibility check selects the most specific approved and effective policy: PIN code, then district, then state. It returns separate sale, delivery, transport, and storage flags. Checkout eligibility requires sale, delivery, and transport permission.
 
 ## Important limits
 
