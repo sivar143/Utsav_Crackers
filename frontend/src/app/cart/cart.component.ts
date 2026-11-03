@@ -45,7 +45,7 @@ import { CartService } from './cart.service';
           </div>
           <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-3">
             <span class="fw-semibold">Subtotal</span>
-            <span class="fs-5 fw-bold">{{ cart.cart().subtotal | currency:cart.cart().currency:'symbol':'1.2-2' }}</span>
+            <span class="fs-5 fw-bold">{{ cart.cart().subtotal | currency:(cart.cart().currency ?? 'INR'):'symbol':'1.2-2' }}</span>
           </div>
           <p class="small text-secondary mt-2 mb-0">Final price, stock, legal eligibility and delivery options are checked again before checkout.</p>
         }
