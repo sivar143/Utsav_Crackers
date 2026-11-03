@@ -24,7 +24,11 @@ spring:
     locations: classpath:db/migration
   security:
     oauth2:
-      resourceserver:
+      resourcerazorpay:
+  key-id: ${RAZORPAY_KEY_ID:}
+  key-secret: ${RAZORPAY_KEY_SECRET:}
+  webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:}
+server:
         jwt:
           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8081/realms/utsav-crackers}
 server:
