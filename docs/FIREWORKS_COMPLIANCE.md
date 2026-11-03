@@ -8,7 +8,7 @@ The compliance module is deliberately **default-deny**. It does not infer that f
 2. Include a source reference to the applicable official order, notification, licence condition, or other reviewed legal instrument, plus legal notes and an effective period.
 3. A different administrator must approve the draft. The creator cannot approve their own policy.
 4. Overlapping approved policies for the same scope and effective period are rejected.
-5. Revoke an approved policy when it is superseded or withdrawn; create a new policy version for future effective dates.
+5. Revoke an approved policy with a recorded reason when it is superseded or withdrawn; the revoking administrator and timestamp are audited. Create a new policy version for future effective dates.
 
 ## API endpoints
 
