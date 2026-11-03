@@ -7,6 +7,10 @@ import in.utsavcrackers.cart.CartRepository;
 import in.utsavcrackers.customer.CustomerAddress;
 import in.utsavcrackers.customer.CustomerAddressRepository;
 import in.utsavcrackers.customer.CustomerAddressRequest;
+import in.utsavcrackers.inventory.InventoryBalance;
+import in.utsavcrackers.inventory.InventoryBalanceRepository;
+import in.utsavcrackers.inventory.InventoryMovement;
+import in.utsavcrackers.inventory.InventoryMovementRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;
@@ -33,6 +37,12 @@ class ProductCataloguePersistenceTest {
 
     @Autowired
     private CustomerAddressRepository customerAddresses;
+
+    @Autowired
+    private InventoryBalanceRepository inventoryBalances;
+
+    @Autowired
+    private InventoryMovementRepository inventoryMovements;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -94,6 +104,29 @@ class ProductCataloguePersistenceTest {
         assertThat(restored.getStateCode()).isEqualTo("IN-AP");
         assertThat(restored.isDefaultAddress()).isTrue();
         assertThat(restored.getLandmark()).isEqualTo("Near the post office");
+    }
+
+    @Test
+    @Transactional
+    void persistsInventoryBalanceAndAppendOnlyMovement() {
+        ProductCategory category = categories.saveAndFlush(new ProductCategory("Roman Candles", "roman-candles"));
+        Product product = products.saveAndFlush(new Product(
+                "RC-001", "Roman Candle", "Inventory test product",
+                category, new BigDecimal("399.00"), "INR"));
+        InventoryBalance balance = new InventoryBalance(product);
+        balance.adjustOnHand(8);
+        inventoryBalances.saveAndFlush(balance);
+        inventoryMovements.saveAndFlush(new InventoryMovement(
+                product, 8, 8, 0, "Opening stock", "admin-subject"));
+        entityManager.clear();
+
+        InventoryBalance restored = inventoryBalances.findByProduct_Id(product.getId()).orElseThrow();
+        var movements = inventoryMovements.findAllByProduct_IdOrderByCreatedAtDesc(product.getId());
+
+        assertThat(restored.getOnHandQuantity()).isEqualTo(8);
+        assertThat(restored.getAvailableQuantity()).isEqualTo(8);
+        assertThat(movements).hasSize(1);
+        assertThat(movements.get(0).getActorSubject()).isEqualTo("admin-subject");
     }
 
 }
