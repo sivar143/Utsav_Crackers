@@ -28,6 +28,18 @@ export class AuthService {
     return keycloak.tokenParsed?.['preferred_username'] ?? null;
   }
 
+  get accountLabel(): string | null {
+    const token = this.customerAccessToken() ?? keycloak.token ?? '';
+    const payload = this.decodeToken(token);
+    const email = payload?.['email'];
+    const phone = payload?.['phone_number'];
+    const username = payload?.['preferred_username'];
+    if (typeof email === 'string' && email.trim()) return email;
+    if (typeof phone === 'string' && phone.trim()) return phone;
+    if (typeof username === 'string' && username.trim()) return username;
+    return null;
+  }
+
   get subject(): string | null {
     if (this.customerAccessToken()) return this.customerClaim('sub');
     return keycloak.tokenParsed?.sub ?? null;
