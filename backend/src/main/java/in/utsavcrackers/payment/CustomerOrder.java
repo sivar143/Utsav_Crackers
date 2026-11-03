@@ -31,6 +31,8 @@ public class CustomerOrder {
     private String paymentMethod;
     @Column(name = "payment_status", nullable = false, length = 24)
     private String paymentStatus = "PENDING";
+    @Column(name = "delivery_status", nullable = false, length = 24)
+    private String deliveryStatus = "PENDING";
     @Column(name = "razorpay_order_id", length = 64, unique = true)
     private String razorpayOrderId;
     @Column(name = "razorpay_payment_id", length = 64, unique = true)
@@ -65,7 +67,12 @@ public class CustomerOrder {
         }
     }
     public void markFailed() { if (!"PAID".equals(paymentStatus)) paymentStatus = "FAILED"; }
+    public void updateDeliveryStatus(String status) { this.deliveryStatus = status; }
     public UUID getId() { return id; }
+    public String getDeliveryAddressSnapshot() { return deliveryAddressSnapshot; }
+    public String getItemsSnapshot() { return itemsSnapshot; }
+    public Instant getCreatedAt() { return createdAt; }
+    public String getDeliveryStatus() { return deliveryStatus; }
     public String getCustomerSubject() { return customerSubject; }
     public BigDecimal getAmount() { return amount; }
     public String getCurrency() { return currency; }
