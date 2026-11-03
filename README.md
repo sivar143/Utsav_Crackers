@@ -33,14 +33,28 @@ Fireworks-specific sales, storage, and transportation restrictions must be enfor
 
 Application development is intended to take place on the `collaborators` branch. The `main` branch is reserved for the repository's stable baseline and reviewed releases.
 
-## Deployment
+## Local Docker deployment
+
+For a complete local deployment of the Angular frontend, Spring Boot backend, MySQL, and Keycloak (with its PostgreSQL database), follow [`docs/local-docker.md`](docs/local-docker.md).
+
+Quick start on Windows PowerShell:
+
+```powershell
+Copy-Item .env.local.example .env.local
+docker compose --env-file .env.local -f compose.local.yml up -d --build
+```
+
+Open the app at http://localhost:4200. Local-only credentials are documented in the runbook; do not reuse them outside a developer machine.
+
+## Cloud deployment
 
 See [`deploy/aws/DEPLOYMENT.md`](deploy/aws/DEPLOYMENT.md) for the AWS EC2 Ubuntu runbook. A private SSH-tunnel-only staging Compose stack is provided for environments without a domain. Public production requires a registered domain, HTTPS certificate, production Keycloak client configuration, and completion of the security, legal, payment, inventory, and fulfilment release gates.
 
 - Development dependencies: `compose.dev.yml`
+- Full local application: `compose.local.yml`
 - Private staging: `compose.staging.yml`
 - HTTPS production: `compose.prod.yml`
-- Environment templates: `.env.staging.example` and `.env.production.example` (never commit populated env files)
+- Environment templates: `.env.local.example`, `.env.staging.example`, and `.env.production.example` (never commit populated env files)
 
 ## Status
 
