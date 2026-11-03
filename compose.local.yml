@@ -36,7 +36,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.3
-    command: ["start-dev", "--import-realm", "--http-port=8080"]
+    command: ["/bin/bash", "/opt/keycloak/start-keycloak.sh"]
     restart: unless-stopped
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
@@ -52,6 +52,7 @@ services:
       - "8081:8080"
     volumes:
       - ./infra/keycloak/realm-export.json:/opt/keycloak/data/import/realm.json:ro
+      - ./infra/keycloak/start-keycloak.sh:/opt/keycloak/start-keycloak.sh:ro
     healthcheck:
       test: ["CMD-SHELL", "{ printf 'HEAD /health/ready HTTP/1.0\\r\\n\\r\\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/9000"]
       interval: 30s
