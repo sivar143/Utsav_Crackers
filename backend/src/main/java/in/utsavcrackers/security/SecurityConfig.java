@@ -3,6 +3,7 @@ package in.utsavcrackers.security;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,7 +60,7 @@ public class SecurityConfig {
         return roles.stream()
                 .filter(String.class::isInstance)
                 .map(String.class::cast)
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase(Locale.ROOT)))
                 .collect(Collectors.toUnmodifiableSet());
     }
 }

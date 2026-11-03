@@ -13,6 +13,8 @@
 
 - Local Keycloak realm import is stored in `infra/keycloak/realm-export.json`.
 - The browser client is a public OIDC client using authorization-code flow with PKCE S256; direct access grants and implicit flow are disabled.
+- Angular uses Keycloak check-sso mode so public catalogue browsing remains available to guests. Its HTTP interceptor attaches refreshed bearer tokens only to relative same-origin `/api/` requests.
+- The current Keycloak URL in the Angular client is a local-development value. Production must supply the identity-provider URL through reviewed deployment runtime configuration before release.
 - The API uses the realm issuer URL from `KEYCLOAK_ISSUER_URI`.
 - `/api/v1/health` and actuator health are public. `/api/v1/admin/**` requires `ADMIN`; `/api/v1/customer/**` requires `CUSTOMER` or `ADMIN`; other versioned API routes require authentication.
 - Customer ownership checks must still be implemented in each application service. A role is not proof of ownership.
