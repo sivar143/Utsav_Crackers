@@ -31,6 +31,7 @@ public class CustomerOtpService {
     private final String realm;
     private final String adminUsername;
     private final String adminPassword;
+    private final String smtpHost;
     private final String twilioSid;
     private final String twilioToken;
     private final String twilioFrom;
@@ -42,6 +43,7 @@ public class CustomerOtpService {
             @Value("${KEYCLOAK_REALM:utsav-crackers}") String realm,
             @Value("${KEYCLOAK_ADMIN:admin}") String adminUsername,
             @Value("${KEYCLOAK_ADMIN_PASSWORD:}") String adminPassword,
+            @Value("${SMTP_HOST:}") String smtpHost,
             @Value("${TWILIO_ACCOUNT_SID:}") String twilioSid,
             @Value("${TWILIO_AUTH_TOKEN:}") String twilioToken,
             @Value("${TWILIO_FROM_NUMBER:}") String twilioFrom) {
@@ -51,6 +53,7 @@ public class CustomerOtpService {
         this.realm = realm;
         this.adminUsername = adminUsername;
         this.adminPassword = adminPassword;
+        this.smtpHost = smtpHost;
         this.twilioSid = twilioSid;
         this.twilioToken = twilioToken;
         this.twilioFrom = twilioFrom;
@@ -72,7 +75,7 @@ public class CustomerOtpService {
         try {
             if ("EMAIL".equals(channel)) {
                 JavaMailSender sender = mailSender.getIfAvailable();
-                if (sender == null) throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Email OTP delivery is not configured. Set SMTP settings in .env.local.");
+                if (smtpHost.isBlank() || sender == null) throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Email OTP delivery is not configured. Set SMTP settings in .env.local.");
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(contact);
                 message.setSubject("Your Utsav Crackers verification code");
