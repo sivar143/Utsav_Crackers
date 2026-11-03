@@ -23,6 +23,9 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
             <span aria-hidden="true">🛒</span>
             @if (cart.cart().totalQuantity > 0) { <span class="badge rounded-pill text-bg-success ms-1">{{ cart.cart().totalQuantity }}</span> }
           </button>
+          @if (auth.hasRole('ADMIN')) {
+            <button class="btn btn-outline-success btn-sm" type="button" (click)="adminPanelOpen.set(true)">Admin panel</button>
+          }
           @if (auth.isAuthenticated) {
             <span class="small text-secondary d-none d-sm-inline">{{ auth.username }}</span>
             <button class="btn btn-outline-secondary btn-sm" type="button" (click)="logout()">Sign out</button>
@@ -39,14 +42,27 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
         <p class="lead mb-0">Discover products with transparent pricing and clear fulfilment information.</p>
       </section>
       @if (customerAuthMode(); as authMode) {
-        <uc-customer-auth [initialMode]="authMode" (close)="closeCustomerAuth()" />
+        <div class="screen-backdrop" (click)="closeCustomerAuth()"></div>
+        <div class="screen-dialog" role="dialog" aria-modal="true" aria-label="Customer sign in">
+          <uc-customer-auth [initialMode]="authMode" (close)="closeCustomerAuth()" />
+        </div>
       }
-      <uc-catalogue-admin />
-      <uc-inventory-admin />
-      <uc-compliance-admin />
+      @if (adminPanelOpen() && auth.hasRole('ADMIN')) {
+        <div class="screen-backdrop" (click)="adminPanelOpen.set(false)"></div>
+        <section class="screen-dialog admin-dialog" role="dialog" aria-modal="true" aria-label="Administrator workspace">
+          <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h4 mb-0">Administrator workspace</h2><button class="btn-close" type="button" aria-label="Close administrator workspace" (click)="adminPanelOpen.set(false)"></button></div>
+          <uc-catalogue-admin />
+          <uc-inventory-admin />
+          <uc-compliance-admin />
+        </section>
+      }
       <uc-cart [opened]="cartOpen()" (close)="cartOpen.set(false)" (requestAddress)="openAddressPanel()" />
       @if (addressPanelOpen() && auth.isAuthenticated) {
-        <uc-address-book (saved)="onAddressSaved()" />
+        <div class="screen-backdrop" (click)="addressPanelOpen.set(false)"></div>
+        <section class="screen-dialog address-dialog" role="dialog" aria-modal="true" aria-label="Delivery address">
+          <div class="d-flex justify-content-end mb-2"><button class="btn-close" type="button" aria-label="Close address screen" (click)="addressPanelOpen.set(false)"></button></div>
+          <uc-address-book (saved)="onAddressSaved()" />
+        </section>
       }
       <uc-product-catalogue (requestSignIn)="showCustomerLogin()" />
       <section class="border-top pt-3 text-secondary small">
@@ -58,6 +74,10 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
     .brand-mark { color: #172b24; font-size: .9rem; font-weight: 800; letter-spacing: .14em; }
     .hero { background: #172b24; color: #fff; }
     .eyebrow { color: #f2c879; letter-spacing: .18em; font-size: .8rem; font-weight: 700; }
+    .screen-backdrop { position: fixed; inset: 0; z-index: 1080; background: rgba(12, 24, 19, .58); backdrop-filter: blur(2px); }
+    .screen-dialog { position: fixed; z-index: 1081; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(760px, calc(100vw - 2rem)); max-height: 88vh; overflow-y: auto; background: #fff; border-radius: 1rem; padding: 1.25rem; box-shadow: 0 1.5rem 4rem rgba(0,0,0,.24); }
+    .admin-dialog { width: min(1200px, calc(100vw - 2rem)); }
+    .address-dialog { width: min(1000px, calc(100vw - 2rem)); }
   `]
 })
 export class AppComponent {
@@ -65,6 +85,7 @@ export class AppComponent {
   readonly customerAuthMode = signal<'login' | 'register' | null>(null);
   readonly cartOpen = signal(false);
   readonly addressPanelOpen = signal(false);
+  readonly adminPanelOpen = signal(false);
 
   readonly cart = inject(CartService);
 
