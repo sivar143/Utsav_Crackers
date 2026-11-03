@@ -167,7 +167,11 @@ export class CustomerAuthComponent {
       });
   }
 
-  showLogin(): void { this.mode.set('login'); this.error.set(''); this.message.set(''); }\n\n  showRegistration(): void { this.mode.set('register'); this.error.set(''); this.message.set(''); }\n\n  private beginRequest(): void {
+  showLogin(): void { this.mode.set('login'); this.error.set(''); this.message.set(''); }
+
+  showRegistration(): void { this.mode.set('register'); this.error.set(''); this.message.set(''); }
+
+  private beginRequest(): void {
     this.error.set('');
     this.message.set('');
     this.busy.set(true);
