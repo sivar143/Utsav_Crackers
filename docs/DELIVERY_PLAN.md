@@ -8,7 +8,9 @@
 - [x] CI workflow and frontend unit-test target
 - [x] Backend tests, MySQL Flyway migration/persistence checks, frontend tests, and production build pass in GitHub Actions
 - [x] Separate production Compose, Nginx TLS edge, and application Dockerfiles
-- [ ] Production Keycloak client and secret strategy
+- [x] Production and isolated SSH-tunnel staging Keycloak client exports and environment templates
+- [x] AWS EC2 Ubuntu deployment and operations runbook
+- [ ] Production secret manager integration and TLS renewal automation
 
 ## Phase 2 — Catalogue and customer experience
 - [x] Product/category persistence and public catalogue APIs
