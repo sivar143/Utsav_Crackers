@@ -119,13 +119,17 @@ public class CustomerOtpService {
         if (otp.consumed || otp.expiresAt.isBefore(Instant.now()) || otp.attempts >= 5) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The code is invalid or expired");
         }
-        jdbc.update("UPDATE customer_login_otps SET attempts=attempts+1 WHERE id=?", otp.id);
         if (!MessageDigest.isEqual(otp.codeHash.getBytes(StandardCharsets.UTF_8),
                 hash(channel + ":" + contact + ":" + request.code()).getBytes(StandardCharsets.UTF_8))) {
+            jdbc.update("UPDATE customer_login_otps SET attempts=attempts+1 WHERE id=?", otp.id);
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The verification code is incorrect");
         }
+
+        // Do not consume a correct OTP until the identity provider has issued
+        // the customer session. A transient Keycloak failure must be retryable.
+        Map<String, Object> session = issueCustomerSession(channel, contact);
         jdbc.update("UPDATE customer_login_otps SET consumed=TRUE WHERE id=?", otp.id);
-        return issueCustomerSession(channel, contact);
+        return session;
     }
 
     private Map<String, Object> issueCustomerSession(String channel, String contact) {
