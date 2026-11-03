@@ -53,10 +53,10 @@ public class FireworksPolicyService {
     }
 
     @Transactional
-    public FireworksPolicyResponse revoke(String actorSubject, UUID id) {
+    public FireworksPolicyResponse revoke(String actorSubject, UUID id, String reason) {
         requireActor(actorSubject);
         FireworksJurisdictionPolicy policy = find(id);
-        policy.revoke();
+        policy.revoke(actorSubject, reason);
         return FireworksPolicyResponse.from(policy);
     }
 
