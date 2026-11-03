@@ -1,5 +1,6 @@
 package in.utsavcrackers.cart;
 
+import in.utsavcrackers.catalogue.Product;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -41,16 +42,16 @@ public class Cart {
         this.customerSubject = customerSubject;
     }
 
-    public void put(ProductReference product, int quantity) {
+    public void put(Product product, int quantity) {
         items.stream()
-                .filter(item -> item.getProductId().equals(product.id()))
+                .filter(item -> item.getProductId().equals(product.getId()))
                 .findFirst()
                 .ifPresentOrElse(
                         item -> item.changeQuantity(quantity),
-                        () -> items.add(new CartItem(this, product.entity(), quantity)));
+                        () -> items.add(new CartItem(this, product, quantity)));
     }
 
-    public void remove(java.util.UUID productId) {
+    public void remove(UUID productId) {
         items.removeIf(item -> item.getProductId().equals(productId));
     }
 
@@ -61,7 +62,4 @@ public class Cart {
     public UUID getId() { return id; }
     public String getCustomerSubject() { return customerSubject; }
     public List<CartItem> getItems() { return items; }
-
-    public record ProductReference(UUID id, in.utsavcrackers.catalogue.Product entity) {
-    }
 }
