@@ -67,4 +67,6 @@ fi
   -s implicitFlowEnabled=false
 
 echo "Reconciled $REALM/utsav-web: public client, Direct Access Grants enabled."
+# Compose must not start the backend until this configuration is complete.
+touch /tmp/utsav-client-configured
 wait "$KEYCLOAK_PID"
