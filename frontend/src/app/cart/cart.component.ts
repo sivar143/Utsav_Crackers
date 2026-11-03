@@ -10,7 +10,8 @@ import { CartService } from './cart.service';
   imports: [CommonModule],
   template: `
     @if (opened) {
-      <section class="cart-panel" aria-labelledby="cart-title">
+      <div class="cart-backdrop" role="presentation" (click)="close.emit()"></div>
+      <section class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cart-title">
         <div class="d-flex justify-content-end"><button type="button" class="btn-close" aria-label="Close cart" (click)="close.emit()"></button></div>
         @if (!auth.isAuthenticated) {
           <p class="text-secondary">Sign in with your email or phone number to view and save your cart.</p>
@@ -39,7 +40,12 @@ import { CartService } from './cart.service';
               <div class="cart-line">
                 <div class="flex-grow-1">
                   <div class="fw-semibold">{{ item.name }}</div>
-                  <div class="text-secondary small">{{ item.quantity }} × {{ item.unitPrice | currency:item.currency:'symbol':'1.2-2' }}</div>
+                  <div class="text-secondary small">{{ item.unitPrice | currency:item.currency:'symbol':'1.2-2' }} each</div>
+                  <div class="quantity-control mt-2" [attr.aria-label]="'Quantity for ' + item.name">
+                    <button class="btn btn-sm btn-outline-secondary" type="button" [disabled]="cart.loading()" [attr.aria-label]="'Decrease quantity of ' + item.name" (click)="decrease(item.productId, item.quantity)">−</button>
+                    <span class="quantity-value" aria-live="polite">{{ item.quantity }}</span>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" [disabled]="cart.loading() || item.quantity >= 99" [attr.aria-label]="'Increase quantity of ' + item.name" (click)="increase(item.productId, item.quantity)">+</button>
+                  </div>
                 </div>
                 <div class="text-end">
                   <div class="fw-semibold">{{ item.lineTotal | currency:item.currency:'symbol':'1.2-2' }}</div>
@@ -63,7 +69,10 @@ import { CartService } from './cart.service';
     }
   `,
   styles: [`
-    .cart-panel { background: #fff; border: 1px solid #e4e9e5; border-radius: 1rem; padding: 1.25rem; margin: 1.5rem 0; }
+    .cart-backdrop { position: fixed; inset: 0; z-index: 1090; background: rgba(12, 24, 19, .58); backdrop-filter: blur(2px); }
+    .cart-panel { position: fixed; z-index: 1091; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(680px, calc(100vw - 2rem)); max-height: min(85vh, 820px); overflow-y: auto; background: #fff; border: 1px solid #e4e9e5; border-radius: 1rem; padding: 1.25rem; box-shadow: 0 1.5rem 4rem rgba(0,0,0,.24); }
+    .quantity-control { display: inline-flex; align-items: center; gap: .65rem; }
+    .quantity-value { min-width: 1.5rem; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
     .cart-eyebrow { color: #8b6a2c; font-size: .72rem; font-weight: 700; letter-spacing: .16em; }
     .cart-lines { display: grid; gap: .75rem; }
     .cart-line { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-bottom: 1px solid #edf0ed; padding-bottom: .75rem; }
@@ -80,6 +89,13 @@ export class CartComponent {
 
   constructor() {
     effect(() => { if (this.auth.isAuthenticated) this.cart.load(); });
+  }
+
+  increase(productId: string, quantity: number): void { this.cart.setQuantity(productId, Math.min(99, quantity + 1)); }
+
+  decrease(productId: string, quantity: number): void {
+    if (quantity <= 1) this.cart.remove(productId);
+    else this.cart.setQuantity(productId, quantity - 1);
   }
 
   proceedToCheckout(): void {
