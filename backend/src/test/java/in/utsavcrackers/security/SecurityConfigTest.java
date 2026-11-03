@@ -1,5 +1,6 @@
 package in.utsavcrackers.security;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,6 +24,9 @@ class SecurityConfigTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private SecurityConfig securityConfig;
 
     @Test
     void healthEndpointIsPublic() throws Exception {
@@ -36,7 +42,22 @@ class SecurityConfigTest {
     void adminRoutesRejectCustomerRole() throws Exception {
         mockMvc.perform(get("/api/v1/admin/example")
                 .with(SecurityMockMvcRequestPostProcessors.jwt()
-                        .jwt(jwt -> jwt.claim("realm_access", Map.of("roles", List.of("CUSTOMER"))))))
+                        .authorities(new SimpleGrantedAuthority("ROLE_CUSTOMER"))))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void keycloakRealmRolesAreMappedToSpringAuthorities() {
+        Jwt jwt = Jwt.withTokenValue("test-token")
+                .header("alg", "none")
+                .claim("realm_access", Map.of("roles", List.of("ADMIN", "CUSTOMER")))
+                .build();
+
+        var authentication = securityConfig.keycloakJwtAuthenticationConverter().convert(jwt);
+
+        assertThat(authentication).isNotNull();
+        assertThat(authentication.getAuthorities())
+                .extracting("authority")
+                .containsExactlyInAnyOrder("ROLE_ADMIN", "ROLE_CUSTOMER");
     }
 }
