@@ -53,6 +53,11 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
 })
 export class AppComponent {
   readonly auth = inject(AuthService);
+  @ViewChild(CustomerAuthComponent) private customerAuth?: CustomerAuthComponent;
+
+  showCustomerLogin(): void { this.customerAuth?.showLogin(); }
+
+  showCustomerSignup(): void { this.customerAuth?.showRegistration(); }
 
   adminLogin(): void {
     void this.auth.login();
