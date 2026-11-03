@@ -5,7 +5,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { AuthService } from './auth.service';
 
-interface CustomerTokenResponse { access_token: string; expires_in: number; refresh_token?: string; }
+interface CustomerTokenResponse {
+  access_token: string;
+  expires_in: number;
+  refresh_token?: string;
+}
 
 @Component({
   selector: 'uc-customer-auth',
@@ -65,82 +69,6 @@ export class CustomerAuthComponent {
   readonly auth = inject(AuthService);
   private readonly http = inject(HttpClient);
   private readonly fb = inject(FormBuilder);
-
-  readonly mode = signal<'login' | 'register'>('login');
-  readonly busy = signal(false);
-  readonly error = signal('');
-  readonly message = signal('');
-
-  readonly registrationForm = this.fb.nonNullable.group({
-    firstName: ['', [Validators.required, Validators.maxLength(100)]],
-    lastName: ['', Validators.maxLength(100)],
-    email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
-    phoneNumber: ['', [Validators.required, Validators.pattern(/^\+?[1-9][0-9]{7,14}$/)]],
-    password: ['', [Validators.required, Validators.minLength(12), Validators.maxLength(72)]],
-    confirmPassword: ['', Validators.required]
-  });
-
-  readonly loginForm = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required]
-  });
-
-  register(): void {
-    if (this.registrationForm.invalid || this.busy()) {
-      this.registrationForm.markAllAsTouched();
-      return;
-    }
-    const { confirmPassword, ...request } = this.registrationForm.getRawValue();
-    if (request.password !== confirmPassword) {
-      this.error.set('The passwords do not match.');
-      return;
-    }
-    this.beginRequest();
-    this.http.post('/api/v1/auth/customer/register', request)
-      .pipe(finalize(() => this.busy.set(false)))
-      .subscribe({
-        next: () => {
-          this.message.set('Your account has been created. Sign in using your email and password.');
-          this.error.set('');
-          this.loginForm.patchValue({ email: request.email, password: '' });
-          this.registrationForm.reset();
-          this.mode.set('login');
-        },
-        error: response => this.error.set(response?.error?.detail ?? response?.error?.message ?? 'Account creation failed. Check whether this email is already registered.')
-      });
-  }
-
-  login(): void {
-    if (this.loginForm.invalid || this.busy()) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-    this.beginRequest();
-    this.http.post<CustomerTokenResponse>('/api/v1/auth/customer/login', this.loginForm.getRawValue())
-      .pipe(finalize(() => this.busy.set(false)))
-      .subscribe({
-        next: response => {
-          this.auth.setCustomerSession(response.access_token, response.refresh_token ?? '', response.expires_in);
-          this.error.set('');
-          this.message.set('');
-        },
-        error: response => this.error.set(response?.error?.detail ?? response?.error?.message ?? 'Sign-in failed. Check your email and password.')
-      });
-  }
-
-  private beginRequest(): void {
-    this.error.set('');
-    this.message.set('');
-    this.busy.set(true);
-  }
-} 
-})
-export class CustomerAuthComponent {
-  @Input() set initialMode(value: 'login' | 'register') { this.mode.set(value); }
-  @Output() readonly close = new EventEmitter<void>();
-  readonly auth = inject(AuthService);
-  private readonly http = inject(HttpClient);
-  private readonly fb = inject(FormBuilder);
   readonly mode = signal<'login' | 'register'>('login');
   readonly channel = signal<'EMAIL' | 'PHONE'>('EMAIL');
   readonly busy = signal(false);
@@ -148,11 +76,14 @@ export class CustomerAuthComponent {
   readonly destination = signal('');
   readonly error = signal('');
   readonly message = signal('');
+
   readonly contactForm = this.fb.nonNullable.group({
     email: ['', [Validators.email, Validators.maxLength(254)]],
     phone: ['', [Validators.pattern(/^\\+?[1-9][0-9]{7,14}$/)]]
   });
-  readonly codeForm = this.fb.nonNullable.group({ code: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]] });
+  readonly codeForm = this.fb.nonNullable.group({
+    code: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]]
+  });
 
   activeContactInvalid(): boolean {
     const control = this.channel() === 'EMAIL' ? this.contactForm.controls.email : this.contactForm.controls.phone;
@@ -169,22 +100,35 @@ export class CustomerAuthComponent {
       (this.channel() === 'EMAIL' ? this.contactForm.controls.email : this.contactForm.controls.phone).markAsTouched();
       return;
     }
-    const contact = this.channel() === 'EMAIL' ? this.contactForm.controls.email.value.trim() : this.contactForm.controls.phone.value.trim();
-    this.busy.set(true); this.error.set(''); this.message.set('');
+    const contact = this.channel() === 'EMAIL'
+      ? this.contactForm.controls.email.value.trim()
+      : this.contactForm.controls.phone.value.trim();
+    this.busy.set(true);
+    this.error.set('');
+    this.message.set('');
     this.http.post('/api/v1/auth/customer/otp/start', { channel: this.channel(), contact })
       .pipe(finalize(() => this.busy.set(false)))
       .subscribe({
-        next: () => { this.destination.set(contact); this.codeSent.set(true); this.message.set('Verification code sent.'); },
+        next: () => {
+          this.destination.set(contact);
+          this.codeSent.set(true);
+          this.message.set('Verification code sent.');
+        },
         error: response => this.error.set(response?.error?.detail ?? 'Could not send the verification code. Check the delivery configuration and try again.')
       });
   }
 
   verifyCode(): void {
-    if (this.codeForm.invalid || this.busy()) { this.codeForm.markAllAsTouched(); return; }
-    const contact = this.destination();
-    this.busy.set(true); this.error.set('');
+    if (this.codeForm.invalid || this.busy()) {
+      this.codeForm.markAllAsTouched();
+      return;
+    }
+    this.busy.set(true);
+    this.error.set('');
     this.http.post<CustomerTokenResponse>('/api/v1/auth/customer/otp/verify', {
-      channel: this.channel(), contact, code: this.codeForm.controls.code.value
+      channel: this.channel(),
+      contact: this.destination(),
+      code: this.codeForm.controls.code.value
     }).pipe(finalize(() => this.busy.set(false))).subscribe({
       next: response => {
         this.auth.setCustomerSession(response.access_token, response.refresh_token ?? '', response.expires_in);
@@ -195,6 +139,9 @@ export class CustomerAuthComponent {
   }
 
   resetCode(): void {
-    this.codeSent.set(false); this.codeForm.reset({ code: '' }); this.error.set(''); this.message.set('');
+    this.codeSent.set(false);
+    this.codeForm.reset({ code: '' });
+    this.error.set('');
+    this.message.set('');
   }
 }
