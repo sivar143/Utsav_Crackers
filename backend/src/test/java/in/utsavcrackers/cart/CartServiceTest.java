@@ -85,8 +85,12 @@ class CartServiceTest {
     void rejectsMixedCurrencyCartContents() {
         UUID inrProductId = UUID.randomUUID();
         UUID usdProductId = UUID.randomUUID();
-        Product inrProduct = product(inrProductId, "INR");
-        Product usdProduct = product(usdProductId, "USD");
+        Product inrProduct = mock(Product.class);
+        when(inrProduct.getId()).thenReturn(inrProductId);
+        when(inrProduct.getCurrency()).thenReturn("INR");
+        Product usdProduct = mock(Product.class);
+        when(usdProduct.getId()).thenReturn(usdProductId);
+        when(usdProduct.getCurrency()).thenReturn("USD");
         Cart cart = new Cart("customer-123");
         cart.put(inrProduct, 1);
         when(products.findByIdAndActiveTrue(usdProductId)).thenReturn(Optional.of(usdProduct));
