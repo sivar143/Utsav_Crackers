@@ -47,7 +47,7 @@ Wait until MySQL and Keycloak are healthy and the backend and frontend have star
 - **Spring Boot API and health endpoint:** http://localhost:8080/actuator/health
 - **MySQL:** localhost:3306
 
-Sign in to the Keycloak administration console with username `admin` and password `admin`. The local `utsav-crackers` realm is imported from `infra/keycloak/realm-export.json`. The Angular app uses the `utsav-web` client and redirects to the local Keycloak URL. Angular API calls under `/api/` are reverse-proxied by Nginx to the backend container.
+Sign in to the Keycloak administration console with username `admin` and password `admin`. The local `utsav-crackers` realm is imported from `infra/keycloak/realm-export.json`. The Angular app uses the `utsav-web` client. Only the administrator sign-in action redirects to the Keycloak-hosted login page; customers use the storefront's own account forms. Angular API calls under `/api/` are reverse-proxied by Nginx to the backend container.
 
 ## 4. Customer registration, customer sign-in, and administrator access
 
