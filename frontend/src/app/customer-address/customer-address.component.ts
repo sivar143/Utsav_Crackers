@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Output, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
@@ -155,6 +155,7 @@ import { CustomerAddressService } from './customer-address.service';
   `]
 })
 export class CustomerAddressComponent {
+  @Output() readonly saved = new EventEmitter<void>();
   readonly auth = inject(AuthService);
   private readonly addressService = inject(CustomerAddressService);
   private readonly fb = inject(FormBuilder);
@@ -240,6 +241,7 @@ export class CustomerAddressComponent {
       next: () => {
         this.resetForm();
         this.load();
+        this.saved.emit();
       },
       error: () => this.error.set('The address could not be saved. Check the details and try again.')
     });
