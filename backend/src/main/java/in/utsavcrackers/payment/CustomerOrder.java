@@ -19,6 +19,12 @@ public class CustomerOrder {
     private UUID id;
     @Column(name = "customer_subject", nullable = false, length = 255, updatable = false)
     private String customerSubject;
+    @Column(name = "customer_name", length = 180, updatable = false)
+    private String customerName;
+    @Column(name = "customer_email", length = 254, updatable = false)
+    private String customerEmail;
+    @Column(name = "customer_phone", length = 32, updatable = false)
+    private String customerPhone;
     @Column(name = "delivery_address_snapshot", nullable = false, length = 1200, updatable = false)
     private String deliveryAddressSnapshot;
     @Column(name = "items_snapshot", nullable = false, columnDefinition = "LONGTEXT", updatable = false)
@@ -50,7 +56,15 @@ public class CustomerOrder {
 
     public CustomerOrder(String customerSubject, String addressSnapshot, String itemsSnapshot,
             BigDecimal amount, String currency, String paymentMethod) {
+        this(customerSubject, null, null, null, addressSnapshot, itemsSnapshot, amount, currency, paymentMethod);
+    }
+
+    public CustomerOrder(String customerSubject, String customerName, String customerEmail, String customerPhone,
+            String addressSnapshot, String itemsSnapshot, BigDecimal amount, String currency, String paymentMethod) {
         this.customerSubject = customerSubject;
+        this.customerName = customerName;
+        this.customerEmail = customerEmail;
+        this.customerPhone = customerPhone;
         this.deliveryAddressSnapshot = addressSnapshot;
         this.itemsSnapshot = itemsSnapshot;
         this.amount = amount;
@@ -74,6 +88,9 @@ public class CustomerOrder {
     public Instant getCreatedAt() { return createdAt; }
     public String getDeliveryStatus() { return deliveryStatus; }
     public String getCustomerSubject() { return customerSubject; }
+    public String getCustomerName() { return customerName; }
+    public String getCustomerEmail() { return customerEmail; }
+    public String getCustomerPhone() { return customerPhone; }
     public BigDecimal getAmount() { return amount; }
     public String getCurrency() { return currency; }
     public String getPaymentMethod() { return paymentMethod; }
