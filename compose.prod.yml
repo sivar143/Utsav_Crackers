@@ -54,6 +54,12 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Set KEYCLOAK_ADMIN_PASSWORD in .env.production}
     expose:
       - "8080"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "{ printf 'HEAD /health/ready HTTP/1.0\\r\\n\\r\\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/9000"]
+      interval: 30s
+      timeout: 5s
+      start_period: 90s
+      retries: 5
     depends_on:
       keycloak-db:
         condition: service_healthy
@@ -78,7 +84,7 @@ services:
       mysql:
         condition: service_healthy
       keycloak:
-        condition: service_started
+        condition: service_healthy
     networks:
       - application
     healthcheck:
