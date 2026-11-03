@@ -36,7 +36,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.3
-    command: ["/bin/bash", "/opt/keycloak/start-keycloak.sh"]
+    entrypoint: ["/bin/bash", "/opt/keycloak/start-keycloak.sh"]
     restart: unless-stopped
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
