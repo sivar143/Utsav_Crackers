@@ -68,7 +68,7 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
       }
       <uc-cart [opened]="cartOpen()" (close)="cartOpen.set(false)" (requestAddress)="openAddressPanel(true)" (manageAddresses)="openAddressPanel(true)" />
       @if (addressPanelOpen() && auth.isAuthenticated) {
-        <div class="screen-backdrop" (click)="addressPanelOpen.set(false)"></div>
+        <div class="screen-backdrop" (click)="closeAddressPanel()"></div>
         <section class="screen-dialog address-dialog" role="dialog" aria-modal="true" aria-label="My addresses">
           <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h4 mb-0">My addresses</h2><button class="btn-close" type="button" aria-label="Close address screen" (click)="addressPanelOpen.set(false)"></button></div>
           <uc-address-book (saved)="onAddressSaved()" />
@@ -122,11 +122,14 @@ export class AppComponent {
     if (!(event.currentTarget as HTMLElement).contains(next)) this.accountMenuOpen.set(false);
   }
 
+  closeAddressPanel(): void {
+    this.addressPanelOpen.set(false);
+    if (this.addressPanelReturnToCart()) this.cartOpen.set(true);
+    this.addressPanelReturnToCart.set(false);
+  }
+
   onAddressSaved(): void {
-    if (this.addressPanelReturnToCart()) {
-      this.addressPanelOpen.set(false);
-      this.cartOpen.set(true);
-    }
+    if (this.addressPanelReturnToCart()) this.closeAddressPanel();
   }
 
   closeCustomerAuth(): void { this.customerAuthMode.set(null); }
