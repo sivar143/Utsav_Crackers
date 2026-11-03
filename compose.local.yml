@@ -54,7 +54,7 @@ services:
       - ./infra/keycloak/realm-export.json:/opt/keycloak/data/import/realm.json:ro
       - ./infra/keycloak/start-keycloak.sh:/opt/keycloak/start-keycloak.sh:ro
     healthcheck:
-      test: ["CMD-SHELL", "{ printf 'HEAD /health/ready HTTP/1.0\\r\\n\\r\\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/9000"]
+      test: ["CMD-SHELL", "test -f /tmp/utsav-client-configured && { printf 'HEAD /health/ready HTTP/1.0\\r\\n\\r\\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/9000"]
       interval: 30s
       timeout: 5s
       start_period: 90s
