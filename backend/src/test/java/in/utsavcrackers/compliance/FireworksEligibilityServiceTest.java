@@ -41,11 +41,11 @@ class FireworksEligibilityServiceTest {
 
     @Test
     void blocksCheckoutWhenNoApprovedJurisdictionPolicyExists() {
-        when(policies.findEffective("IN-AP|*|533001", org.mockito.ArgumentMatchers.any()))
+        when(policies.findEffective("IN-AP|*|533001", PolicyStatus.APPROVED, org.mockito.ArgumentMatchers.any()))
                 .thenReturn(java.util.List.of());
-        when(policies.findEffective("IN-AP|east godavari|*", org.mockito.ArgumentMatchers.any()))
+        when(policies.findEffective("IN-AP|east godavari|*", PolicyStatus.APPROVED, org.mockito.ArgumentMatchers.any()))
                 .thenReturn(java.util.List.of());
-        when(policies.findEffective("IN-AP|*|*", org.mockito.ArgumentMatchers.any()))
+        when(policies.findEffective("IN-AP|*|*", PolicyStatus.APPROVED, org.mockito.ArgumentMatchers.any()))
                 .thenReturn(java.util.List.of());
 
         FireworksEligibilityResponse response = service.check("customer-subject", addressId);
