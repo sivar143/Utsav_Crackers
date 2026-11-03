@@ -16,7 +16,7 @@ CREATE TABLE products (
     description VARCHAR(2000) NULL,
     category_id VARCHAR(36) NOT NULL,
     price DECIMAL(12, 2) NOT NULL,
-    currency CHAR(3) NOT NULL,
+    currency VARCHAR(3) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     updated_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
