@@ -20,7 +20,10 @@ public record FireworksPolicyResponse(
         PolicyStatus status,
         String createdBy,
         String reviewedBy,
-        Instant reviewedAt) {
+        Instant reviewedAt,
+        String revokedBy,
+        Instant revokedAt,
+        String revocationReason) {
 
     static FireworksPolicyResponse from(FireworksJurisdictionPolicy policy) {
         return new FireworksPolicyResponse(policy.getId(), policy.getScopeType(), policy.getStateCode(),
@@ -28,6 +31,7 @@ public record FireworksPolicyResponse(
                 policy.isDeliveryAllowed(), policy.isTransportAllowed(), policy.isStorageAllowed(),
                 policy.getEffectiveFrom(), policy.getEffectiveUntil(), policy.getSourceReference(),
                 policy.getLegalNotes(), policy.getStatus(), policy.getCreatedBy(),
-                policy.getReviewedBy(), policy.getReviewedAt());
+                policy.getReviewedBy(), policy.getReviewedAt(), policy.getRevokedBy(),
+                policy.getRevokedAt(), policy.getRevocationReason());
     }
 }
