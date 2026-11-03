@@ -21,13 +21,10 @@ interface CustomerTokenResponse {
         <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
           <div>
             <p class="auth-eyebrow mb-1">YOUR UTSAV ACCOUNT</p>
-            <h2 id="customer-auth-title" class="h4 mb-1">{{ mode() === 'register' ? 'Create your account' : 'Customer sign in' }}</h2>
-            <p class="text-secondary small mb-0">Register and sign in securely without visiting the identity-provider login screen.</p>
+            <h2 id="customer-auth-title" class="h4 mb-1">{{ mode() === 'register' ? 'Create your account' : 'Welcome back' }}</h2>
+            <p class="text-secondary small mb-0">Sign in to continue shopping. New to Utsav? You can create an account below.</p>
           </div>
-          <div class="btn-group btn-group-sm" role="group" aria-label="Customer account action">
-            <button type="button" class="btn" [class.btn-success]="mode() === 'login'" [class.btn-outline-success]="mode() !== 'login'" (click)="mode.set('login')">Sign in</button>
-            <button type="button" class="btn" [class.btn-success]="mode() === 'register'" [class.btn-outline-success]="mode() !== 'register'" (click)="mode.set('register')">Create account</button>
-          </div>
+
         </div>
 
         @if (message()) {
@@ -73,6 +70,7 @@ interface CustomerTokenResponse {
               </div>
             </div>
             <button class="btn btn-success mt-3" type="submit" [disabled]="busy() || registrationForm.invalid"> {{ busy() ? 'Creating account…' : 'Create customer account' }} </button>
+            <p class="small text-secondary mt-3 mb-0">Already have an account? <button type="button" class="btn btn-link btn-sm p-0 align-baseline" (click)="mode.set('login')">Sign in</button></p>
           </form>
         } @else {
           <form [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
@@ -87,6 +85,10 @@ interface CustomerTokenResponse {
               </div>
             </div>
             <button class="btn btn-success mt-3" type="submit" [disabled]="busy() || loginForm.invalid">{{ busy() ? 'Signing in…' : 'Sign in to your account' }}</button>
+            <div class="mt-4 pt-3 border-top">
+              <p class="small text-secondary mb-2">Don't have an account yet?</p>
+              <button class="btn btn-outline-success" type="button" (click)="mode.set('register')">Create a customer account</button>
+            </div>
           </form>
         }
         <p class="small text-secondary mt-3 mb-0">Administrator? Use the separate administrator sign-in in the page header.</p>
@@ -103,7 +105,7 @@ export class CustomerAuthComponent {
   private readonly http = inject(HttpClient);
   private readonly fb = inject(FormBuilder);
 
-  readonly mode = signal<'login' | 'register'>('register');
+  readonly mode = signal<'login' | 'register'>('login');
   readonly busy = signal(false);
   readonly error = signal('');
   readonly message = signal('');
@@ -165,7 +167,7 @@ export class CustomerAuthComponent {
       });
   }
 
-  private beginRequest(): void {
+  showLogin(): void { this.mode.set('login'); this.error.set(''); this.message.set(''); }\n\n  showRegistration(): void { this.mode.set('register'); this.error.set(''); this.message.set(''); }\n\n  private beginRequest(): void {
     this.error.set('');
     this.message.set('');
     this.busy.set(true);
