@@ -33,6 +33,15 @@ Fireworks-specific sales, storage, and transportation restrictions must be enfor
 
 Application development is intended to take place on the `collaborators` branch. The `main` branch is reserved for the repository's stable baseline and reviewed releases.
 
+## Deployment
+
+See [`deploy/aws/DEPLOYMENT.md`](deploy/aws/DEPLOYMENT.md) for the AWS EC2 Ubuntu runbook. A private SSH-tunnel-only staging Compose stack is provided for environments without a domain. Public production requires a registered domain, HTTPS certificate, production Keycloak client configuration, and completion of the security, legal, payment, inventory, and fulfilment release gates.
+
+- Development dependencies: `compose.dev.yml`
+- Private staging: `compose.staging.yml`
+- HTTPS production: `compose.prod.yml`
+- Environment templates: `.env.staging.example` and `.env.production.example` (never commit populated env files)
+
 ## Status
 
-Initial repository bootstrap. Implementation and detailed architecture are to be developed incrementally, with tests and documentation accompanying each feature.
+The application is under active development. Deployment scaffolding is provided, but the platform is not yet ready for real customer orders or payments.
