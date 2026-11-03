@@ -8,21 +8,24 @@ import { InventoryAdminComponent } from './inventory/inventory-admin.component';
 import { ComplianceAdminComponent } from './compliance/compliance-admin.component';
 import { AuthService } from './auth/auth.service';
 import { CustomerAuthComponent } from './auth/customer-auth.component';
+import { DeliveryAdminComponent } from './admin/delivery-admin.component';
 
 @Component({
   selector: 'uc-root',
   standalone: true,
   imports: [ProductCatalogueComponent, CartComponent, CustomerAddressComponent, CatalogueAdminComponent,
-    InventoryAdminComponent, ComplianceAdminComponent, CustomerAuthComponent],
+    InventoryAdminComponent, ComplianceAdminComponent, CustomerAuthComponent, DeliveryAdminComponent],
   template: `
     <main class="page-shell container py-4 py-md-5">
       <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <a class="brand-mark text-decoration-none" href="/" aria-label="Utsav Crackers home">UTSAV CRACKERS</a>
         <div class="d-flex align-items-center gap-2">
+          @if (!auth.hasRole('ADMIN')) {
           <button class="btn btn-outline-success btn-sm position-relative" type="button" aria-label="Open shopping cart" (click)="cartOpen.set(true)">
             <span aria-hidden="true">🛒</span>
             @if (cart.cart().totalQuantity > 0) { <span class="badge rounded-pill text-bg-success ms-1">{{ cart.cart().totalQuantity }}</span> }
           </button>
+          }
           @if (auth.hasRole('ADMIN')) {
             <button class="btn btn-outline-success btn-sm" type="button" (click)="adminPanelOpen.set(true)">Admin panel</button>
           }
@@ -67,10 +70,11 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
           <uc-catalogue-admin />
           <uc-inventory-admin />
           <uc-compliance-admin />
+          <uc-delivery-admin />
         </section>
       }
       <uc-cart [opened]="cartOpen()" (close)="cartOpen.set(false)" (requestAddress)="openAddressPanel(true)" (manageAddresses)="openAddressPanel(true)" />
-      @if (addressPanelOpen() && auth.isAuthenticated) {
+      @if (addressPanelOpen() && auth.hasRole('CUSTOMER') && !auth.hasRole('ADMIN')) {
         <div class="screen-backdrop" (click)="closeAddressPanel()"></div>
         <section class="screen-dialog address-dialog" role="dialog" aria-modal="true" aria-label="My addresses">
           <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h4 mb-0">My addresses</h2><button class="btn-close" type="button" aria-label="Close address screen" (click)="addressPanelOpen.set(false)"></button></div>
