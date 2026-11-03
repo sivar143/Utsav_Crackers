@@ -1,0 +1,32 @@
+{
+  "realm": "utsav-crackers",
+  "enabled": true,
+  "displayName": "Utsav Crackers",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": true,
+  "roles": {
+    "realm": [
+      { "name": "CUSTOMER", "description": "Standard customer access" },
+      { "name": "ADMIN", "description": "Administrative access" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "utsav-web",
+      "name": "Utsav Crackers Web",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["https://REPLACE_WITH_YOUR_DOMAIN/*"],
+      "webOrigins": ["https://REPLACE_WITH_YOUR_DOMAIN"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "https://REPLACE_WITH_YOUR_DOMAIN/*"
+      }
+    }
+  ]
+}
