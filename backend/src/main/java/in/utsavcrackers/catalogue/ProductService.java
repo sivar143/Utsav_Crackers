@@ -37,7 +37,7 @@ public class ProductService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "A product with this SKU already exists");
         }
         Product product = new Product(sku, request.name().trim(), request.description(),
-                activeCategory(request.categoryId()), request.price(), request.currency());
+                activeCategory(request.categoryId()), request.price(), request.currency(), validateImage(request.imageData()));
         return toResponse(products.save(product));
     }
 
@@ -61,6 +61,18 @@ public class ProductService {
         product.deactivate();
     }
 
+    private String validateImage(String imageData) {
+        if (imageData == null || imageData.isBlank()) return null;
+        if (imageData.length() > 1_500_000
+                || !(imageData.startsWith("data:image/jpeg;base64,")
+                || imageData.startsWith("data:image/png;base64,")
+                || imageData.startsWith("data:image/webp;base64,"))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Product image must be a JPEG, PNG or WebP image no larger than 1 MB.");
+        }
+        return imageData;
+    }
+
     private ProductCategory activeCategory(UUID id) {
         return categories.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "The selected category is unavailable"));
@@ -69,6 +81,6 @@ public class ProductService {
     private ProductResponse toResponse(Product product) {
         return new ProductResponse(product.getId(), product.getSku(), product.getName(),
                 product.getDescription(), product.getCategory().getId(), product.getCategory().getName(),
-                product.getPrice(), product.getCurrency());
+                product.getPrice(), product.getCurrency(), product.getImageData());
     }
 }
