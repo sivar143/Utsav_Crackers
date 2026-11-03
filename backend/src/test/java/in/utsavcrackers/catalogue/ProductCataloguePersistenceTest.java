@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import in.utsavcrackers.cart.Cart;
 import in.utsavcrackers.cart.CartRepository;
+import in.utsavcrackers.customer.CustomerAddress;
+import in.utsavcrackers.customer.CustomerAddressRepository;
+import in.utsavcrackers.customer.CustomerAddressRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;
@@ -27,6 +30,9 @@ class ProductCataloguePersistenceTest {
 
     @Autowired
     private CartRepository carts;
+
+    @Autowired
+    private CustomerAddressRepository customerAddresses;
 
     @PersistenceContext
     private EntityManager entityManager;
