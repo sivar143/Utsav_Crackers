@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CustomerAddress, CustomerAddressRequest } from './customer-address.model';
+import { CustomerAddress, CustomerAddressRequest, FireworksEligibilityResponse } from './customer-address.model';
 
 @Injectable({ providedIn: 'root' })
 export class CustomerAddressService {
@@ -26,5 +26,9 @@ export class CustomerAddressService {
 
   remove(id: string): Observable<void> {
     return this.http.delete<void>(`${this.endpoint}/${id}`);
+  }
+
+  checkFireworksEligibility(addressId: string): Observable<FireworksEligibilityResponse> {
+    return this.http.post<FireworksEligibilityResponse>('/api/v1/customer/compliance/eligibility-check', { addressId });
   }
 }
