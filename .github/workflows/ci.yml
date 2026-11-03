@@ -63,3 +63,11 @@ jobs:
       - name: Build production frontend
         working-directory: frontend
         run: npm run build
+
+  deployment-config:
+    name: Validate production Compose configuration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate production Compose file
+        run: docker compose --env-file .env.production.example -f compose.prod.yml config --quiet
