@@ -61,6 +61,13 @@ import { ProductService, ProductUpsertRequest } from '../catalogue/product.servi
                     <label class="form-label" for="product-description">Description</label>
                     <textarea id="product-description" class="form-control" rows="2" formControlName="description"></textarea>
                   </div>
+                  <div class="col-12">
+                    <label class="form-label" for="product-image">Product image (JPEG, PNG or WebP; max 1 MB)</label>
+                    <input id="product-image" class="form-control" type="file" accept="image/jpeg,image/png,image/webp" (change)="selectProductImage($event)">
+                    @if (imagePreview()) {
+                      <img class="product-image-preview mt-2" [src]="imagePreview()" alt="Product image preview">
+                    }
+                  </div>
                   <div class="col-12 col-md-5">
                     <label class="form-label" for="product-category">Category</label>
                     <select id="product-category" class="form-select" formControlName="categoryId">
@@ -110,7 +117,7 @@ import { ProductService, ProductUpsertRequest } from '../catalogue/product.servi
                 <tbody>
                   @for (product of products(); track product.id) {
                     <tr>
-                      <td class="fw-semibold">{{ product.name }}</td>
+                      <td><div class="d-flex align-items-center gap-2">@if (product.imageData) { <img class="product-thumb" [src]="product.imageData" [alt]="product.name"> }<span class="fw-semibold">{{ product.name }}</span></div></td>
                       <td class="small text-secondary">{{ product.sku }}</td>
                       <td>{{ product.categoryName }}</td>
                       <td class="text-end">{{ product.price | currency:product.currency:'symbol':'1.2-2' }}</td>
@@ -139,6 +146,8 @@ import { ProductService, ProductUpsertRequest } from '../catalogue/product.servi
   styles: [`
     .admin-panel { background: #fff; border: 1px solid #e4e9e5; border-radius: 1rem; padding: 1.25rem; margin: 1.5rem 0; }
     .admin-eyebrow { color: #8b6a2c; font-size: .72rem; font-weight: 700; letter-spacing: .16em; }
+    .product-image-preview { width: 140px; height: 100px; object-fit: contain; border: 1px solid #e4e9e5; border-radius: .5rem; background: #fff; }
+    .product-thumb { width: 48px; height: 40px; object-fit: contain; border-radius: .35rem; background: #fff; }
     .admin-card { background: #fbfcfa; border: 1px solid #e8ede9; border-radius: .85rem; padding: 1rem; }
   `]
 })
@@ -156,6 +165,7 @@ export class CatalogueAdminComponent implements OnInit {
   readonly success = signal('');
   readonly editingId = signal<string | null>(null);
   readonly pendingDeactivateId = signal<string | null>(null);
+  readonly imagePreview = signal<string | null>(null);
 
   readonly categoryForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],
@@ -215,7 +225,7 @@ export class CatalogueAdminComponent implements OnInit {
       this.productForm.markAllAsTouched();
       return;
     }
-    const request = this.productForm.getRawValue() as ProductUpsertRequest;
+    const request = { ...this.productForm.getRawValue(), imageData: this.imagePreview() } as ProductUpsertRequest;
     const id = this.editingId();
     this.saving.set(true);
     this.error.set('');
@@ -233,6 +243,7 @@ export class CatalogueAdminComponent implements OnInit {
 
   editProduct(product: Product): void {
     this.editingId.set(product.id);
+    this.imagePreview.set(product.imageData ?? null);
     this.pendingDeactivateId.set(null);
     this.productForm.patchValue({
       sku: product.sku,
@@ -242,6 +253,26 @@ export class CatalogueAdminComponent implements OnInit {
       price: product.price,
       currency: product.currency
     });
+  }
+
+  selectProductImage(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 1024 * 1024) {
+      this.error.set('Choose a JPEG, PNG or WebP image no larger than 1 MB.');
+      input.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        this.imagePreview.set(reader.result);
+        this.error.set('');
+      }
+    };
+    reader.onerror = () => this.error.set('The selected image could not be read.');
+    reader.readAsDataURL(file);
   }
 
   confirmDeactivate(id: string): void {
@@ -261,6 +292,7 @@ export class CatalogueAdminComponent implements OnInit {
 
   resetProductForm(): void {
     this.editingId.set(null);
+    this.imagePreview.set(null);
     this.productForm.reset({
       sku: '', name: '', description: '', categoryId: '', price: 0.01, currency: 'INR'
     });
