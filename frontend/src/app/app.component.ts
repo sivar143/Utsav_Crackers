@@ -15,7 +15,7 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
   imports: [ProductCatalogueComponent, CartComponent, CustomerAddressComponent, CatalogueAdminComponent,
     InventoryAdminComponent, ComplianceAdminComponent, CustomerAuthComponent],
   template: `
-    <main class="container py-4 py-md-5">
+    <main class="page-shell container py-4 py-md-5">
       <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <a class="brand-mark text-decoration-none" href="/" aria-label="Utsav Crackers home">UTSAV CRACKERS</a>
         <div class="d-flex align-items-center gap-2">
@@ -70,11 +70,11 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
     </main>
   `,
   styles: [`
-    .brand-mark { color: #172b24; font-size: .9rem; font-weight: 800; letter-spacing: .14em; }
-    .hero { background: #172b24; color: #fff; }
+    .page-shell { position: relative; z-index: 0; }\n    .brand-mark { color: #17372b; font-size: .9rem; font-weight: 800; letter-spacing: .14em; }
+    .hero { background: linear-gradient(118deg, #163a2d 0%, #20513d 58%, #8a642d 140%); color: #fff; border: 1px solid rgba(229,190,112,.35); box-shadow: 0 1rem 2.5rem rgba(36,65,48,.12); }
     .eyebrow { color: #f2c879; letter-spacing: .18em; font-size: .8rem; font-weight: 700; }
     .screen-backdrop { position: fixed; inset: 0; z-index: 1080; background: rgba(12, 24, 19, .58); backdrop-filter: blur(2px); }
-    .screen-dialog { position: fixed; z-index: 1081; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(760px, calc(100vw - 2rem)); max-height: 88vh; overflow-y: auto; background: #fff; border-radius: 1rem; padding: 1.25rem; box-shadow: 0 1.5rem 4rem rgba(0,0,0,.24); }
+    .screen-dialog { position: fixed; z-index: 1081; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(760px, calc(100vw - 2rem)); max-height: 88vh; overflow-y: auto; background: #fffdf8; border: 1px solid rgba(174,139,76,.24); border-radius: 1rem; padding: 1.25rem; box-shadow: 0 1.5rem 4rem rgba(0,0,0,.24); }
     .admin-dialog { width: min(1200px, calc(100vw - 2rem)); }
     .address-dialog { width: min(1000px, calc(100vw - 2rem)); }
   `]
