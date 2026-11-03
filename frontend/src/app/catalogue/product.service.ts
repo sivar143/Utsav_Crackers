@@ -10,7 +10,7 @@ export interface ProductUpsertRequest {
   categoryId: string;
   price: number;
   currency: string;
-  imageData: string | null;
+  imageData?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
