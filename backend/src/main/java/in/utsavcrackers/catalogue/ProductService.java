@@ -50,7 +50,8 @@ public class ProductService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "A product with this SKU already exists");
         }
         product.update(sku, request.name().trim(), request.description(),
-                activeCategory(request.categoryId()), request.price(), request.currency(), validateImage(request.imageData()));
+                activeCategory(request.categoryId()), request.price(), request.currency(),
+                request.imageData() == null ? product.getImageData() : validateImage(request.imageData()));
         return toResponse(product);
     }
 
