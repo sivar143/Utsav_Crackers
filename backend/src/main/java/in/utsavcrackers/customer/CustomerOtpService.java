@@ -32,6 +32,7 @@ public class CustomerOtpService {
     private final String adminUsername;
     private final String adminPassword;
     private final String smtpHost;
+    private final String smtpFrom;
     private final String twilioSid;
     private final String twilioToken;
     private final String twilioFrom;
@@ -44,6 +45,7 @@ public class CustomerOtpService {
             @Value("${KEYCLOAK_ADMIN:admin}") String adminUsername,
             @Value("${KEYCLOAK_ADMIN_PASSWORD:}") String adminPassword,
             @Value("${SMTP_HOST:}") String smtpHost,
+            @Value("${SMTP_FROM:}") String smtpFrom,
             @Value("${TWILIO_ACCOUNT_SID:}") String twilioSid,
             @Value("${TWILIO_AUTH_TOKEN:}") String twilioToken,
             @Value("${TWILIO_FROM_NUMBER:}") String twilioFrom) {
@@ -54,6 +56,7 @@ public class CustomerOtpService {
         this.adminUsername = adminUsername;
         this.adminPassword = adminPassword;
         this.smtpHost = smtpHost;
+        this.smtpFrom = smtpFrom;
         this.twilioSid = twilioSid;
         this.twilioToken = twilioToken;
         this.twilioFrom = twilioFrom;
@@ -78,6 +81,7 @@ public class CustomerOtpService {
                 if (smtpHost.isBlank() || sender == null) throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Email OTP delivery is not configured. Set SMTP settings in .env.local.");
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(contact);
+                if (!smtpFrom.isBlank()) message.setFrom(smtpFrom);
                 message.setSubject("Your Utsav Crackers verification code");
                 message.setText("Your Utsav Crackers verification code is " + code + ". It expires in 5 minutes. Do not share this code.");
                 sender.send(message);
