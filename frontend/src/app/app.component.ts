@@ -66,7 +66,7 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
           <uc-compliance-admin />
         </section>
       }
-      <uc-cart [opened]="cartOpen()" (close)="cartOpen.set(false)" (requestAddress)="openAddressPanel(true)" (manageAddresses)="openAddressPanel(false)" />
+      <uc-cart [opened]="cartOpen()" (close)="cartOpen.set(false)" (requestAddress)="openAddressPanel(true)" (manageAddresses)="openAddressPanel(true)" />
       @if (addressPanelOpen() && auth.isAuthenticated) {
         <div class="screen-backdrop" (click)="addressPanelOpen.set(false)"></div>
         <section class="screen-dialog address-dialog" role="dialog" aria-modal="true" aria-label="My addresses">
