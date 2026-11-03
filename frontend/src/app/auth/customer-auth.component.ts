@@ -151,7 +151,7 @@ export class CustomerAuthComponent {
       .pipe(finalize(() => this.busy.set(false)))
       .subscribe({
         next: response => {
-          this.auth.setCustomerSession(response.access_token);
+          this.auth.setCustomerSession(response.access_token, response.refresh_token ?? '', response.expires_in);
           this.error.set('');
           this.message.set('');
         },
