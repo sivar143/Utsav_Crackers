@@ -36,7 +36,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.3
-    command: ["start", "--http-enabled=true", "--proxy-headers=xforwarded"]
+    command: ["start", "--import-realm", "--http-enabled=true", "--proxy-headers=xforwarded"]
     restart: unless-stopped
     environment:
       KC_DB: postgres
@@ -52,6 +52,8 @@ services:
       KC_METRICS_ENABLED: "true"
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:?Set KEYCLOAK_ADMIN_USERNAME in .env.production}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Set KEYCLOAK_ADMIN_PASSWORD in .env.production}
+    volumes:
+      - ./infra/keycloak/realm-prod.json:/opt/keycloak/data/import/realm.json:ro
     expose:
       - "8080"
     healthcheck:
