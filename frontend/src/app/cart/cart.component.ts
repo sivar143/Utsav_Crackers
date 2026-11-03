@@ -255,7 +255,7 @@ export class CartComponent {
         config: {
           display: {
             blocks: { selected: { name: this.paymentMethod() === 'UPI' ? 'Pay using UPI' : 'Pay using card', instruments: [{ method: instrument }] } },
-            sequence: ['selected'],
+            sequence: ['block.selected'],
             preferences: { show_default_blocks: false }
           }
         },
