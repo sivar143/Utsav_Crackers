@@ -39,13 +39,13 @@ class InventoryServiceTest {
         service = new InventoryService(products, balances, movements);
         productId = UUID.randomUUID();
         product = mock(Product.class);
-        when(product.getId()).thenReturn(productId);
-        when(product.getSku()).thenReturn("SKU-001");
-        when(product.getName()).thenReturn("Test product");
     }
 
     @Test
     void recordsPositiveAdjustmentAndCreatesTheInitialBalance() {
+        when(product.getId()).thenReturn(productId);
+        when(product.getSku()).thenReturn("SKU-001");
+        when(product.getName()).thenReturn("Test product");
         when(products.findActiveByIdForUpdate(productId)).thenReturn(Optional.of(product));
         when(balances.findByProductIdForUpdate(productId)).thenReturn(Optional.empty());
         when(balances.save(any(InventoryBalance.class))).thenAnswer(invocation -> invocation.getArgument(0));
