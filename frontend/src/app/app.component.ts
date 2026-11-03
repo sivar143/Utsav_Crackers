@@ -66,7 +66,7 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
           <uc-compliance-admin />
         </section>
       }
-      <uc-cart [opened]="cartOpen()" (close)="cartOpen.set(false)" (requestAddress)="openAddressPanel()" (manageAddresses)="openAddressPanel()" />
+      <uc-cart [opened]="cartOpen()" (close)="cartOpen.set(false)" (requestAddress)="openAddressPanel(true)" (manageAddresses)="openAddressPanel(false)" />
       @if (addressPanelOpen() && auth.isAuthenticated) {
         <div class="screen-backdrop" (click)="addressPanelOpen.set(false)"></div>
         <section class="screen-dialog address-dialog" role="dialog" aria-modal="true" aria-label="My addresses">
@@ -102,6 +102,7 @@ export class AppComponent {
   readonly addressPanelOpen = signal(false);
   readonly adminPanelOpen = signal(false);
   readonly accountMenuOpen = signal(false);
+  readonly addressPanelReturnToCart = signal(false);
 
   readonly cart = inject(CartService);
 
