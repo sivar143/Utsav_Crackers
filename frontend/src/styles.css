@@ -3,23 +3,26 @@
 :root {
   color-scheme: light;
   font-family: 'DM Sans', sans-serif;
-  background: #f4f0e5;
+  background: #101713;
   color: #20342a;
 }
 
 html {
   min-height: 100%;
-  background: #f4f0e5;
+  background: #101713;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   color: #20342a;
-  background:
-    radial-gradient(ellipse at 8% 8%, rgba(218, 173, 91, .18), transparent 34rem),
-    radial-gradient(ellipse at 92% 24%, rgba(92, 139, 103, .15), transparent 38rem),
-    linear-gradient(145deg, #f8f5ec 0%, #eee9dc 48%, #f5f0e5 100%);
+  background-color: #101713;
+  background-image:
+    linear-gradient(135deg, rgba(8, 18, 14, .58), rgba(12, 20, 17, .66)),
+    url("https://media.istockphoto.com/id/1184561513/photo/fireworks.jpg?s=2048x2048&w=is&k=20&c=eEOJxBEckfMBgWQbfq5Pz3CLFCALc93R7rvfwn3fCH8=");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
   background-attachment: fixed;
 }
 
@@ -30,4 +33,11 @@ button, input, select, textarea {
 ::selection {
   background: rgba(190, 143, 59, .25);
   color: #17372b;
+}
+
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+    background-position: center top;
+  }
 }
