@@ -11,5 +11,10 @@ public record ProductResponse(
         UUID categoryId,
         String categoryName,
         BigDecimal price,
-        String currency) {
+        String currency,
+        String imageData) {
+    public ProductResponse(UUID id, String sku, String name, String description, UUID categoryId,
+            String categoryName, BigDecimal price, String currency) {
+        this(id, sku, name, description, categoryId, categoryName, price, currency, null);
+    }
 }
