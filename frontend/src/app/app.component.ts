@@ -27,8 +27,19 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
             <button class="btn btn-outline-success btn-sm" type="button" (click)="adminPanelOpen.set(true)">Admin panel</button>
           }
           @if (auth.isAuthenticated) {
-            <span class="small text-secondary d-none d-sm-inline">{{ auth.username }}</span>
-            <button class="btn btn-outline-secondary btn-sm" type="button" (click)="logout()">Sign out</button>
+            <div class="account-menu" (mouseenter)="accountMenuOpen.set(true)" (mouseleave)="accountMenuOpen.set(false)" (focusin)="accountMenuOpen.set(true)" (focusout)="closeAccountMenu($event)">
+              <button class="btn btn-outline-secondary btn-sm account-trigger" type="button" aria-haspopup="true"
+                [attr.aria-expanded]="accountMenuOpen()" (click)="accountMenuOpen.update(open => !open)">
+                {{ auth.username || 'My account' }} <span aria-hidden="true">▾</span>
+              </button>
+              @if (accountMenuOpen()) {
+                <div class="account-dropdown" role="menu">
+                  <div class="account-identity small text-secondary px-3 py-2">{{ auth.username || 'Signed-in customer' }}</div>
+                  <button class="dropdown-item" type="button" role="menuitem" (click)="openAddressPanel()">My addresses</button>
+                  <button class="dropdown-item" type="button" role="menuitem" (click)="logout()">Sign out</button>
+                </div>
+              }
+            </div>
           } @else {
             <button class="btn btn-outline-success btn-sm" type="button" (click)="showCustomerLogin()">Sign in</button>
             <button class="btn btn-link btn-sm text-secondary" type="button" (click)="adminLogin()">Administrator</button>
@@ -55,11 +66,11 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
           <uc-compliance-admin />
         </section>
       }
-      <uc-cart [opened]="cartOpen()" (close)="cartOpen.set(false)" (requestAddress)="openAddressPanel()" />
+      <uc-cart [opened]="cartOpen()" (close)="cartOpen.set(false)" (requestAddress)="openAddressPanel()" (manageAddresses)="openAddressPanel()" />
       @if (addressPanelOpen() && auth.isAuthenticated) {
         <div class="screen-backdrop" (click)="addressPanelOpen.set(false)"></div>
-        <section class="screen-dialog address-dialog" role="dialog" aria-modal="true" aria-label="Delivery address">
-          <div class="d-flex justify-content-end mb-2"><button class="btn-close" type="button" aria-label="Close address screen" (click)="addressPanelOpen.set(false)"></button></div>
+        <section class="screen-dialog address-dialog" role="dialog" aria-modal="true" aria-label="My addresses">
+          <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h4 mb-0">My addresses</h2><button class="btn-close" type="button" aria-label="Close address screen" (click)="addressPanelOpen.set(false)"></button></div>
           <uc-address-book (saved)="onAddressSaved()" />
         </section>
       }
@@ -71,6 +82,11 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
   `,
   styles: [`
     .page-shell { position: relative; z-index: 0; }\n    .brand-mark { color: #17372b; font-size: .9rem; font-weight: 800; letter-spacing: .14em; }
+    .account-menu { position: relative; }
+    .account-trigger { max-width: min(42vw, 280px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .account-dropdown { position: absolute; z-index: 1100; top: calc(100% + .35rem); right: 0; min-width: 190px; padding: .35rem 0; background: #fff; border: 1px solid #e4e9e5; border-radius: .75rem; box-shadow: 0 .75rem 2rem rgba(0,0,0,.14); }
+    .account-identity { border-bottom: 1px solid #edf0ed; overflow-wrap: anywhere; }
+    .account-dropdown .dropdown-item { padding: .55rem 1rem; }
     .hero { background: linear-gradient(118deg, #163a2d 0%, #20513d 58%, #8a642d 140%); color: #fff; border: 1px solid rgba(229,190,112,.35); box-shadow: 0 1rem 2.5rem rgba(36,65,48,.12); }
     .eyebrow { color: #f2c879; letter-spacing: .18em; font-size: .8rem; font-weight: 700; }
     .screen-backdrop { position: fixed; inset: 0; z-index: 1080; background: rgba(12, 24, 19, .58); backdrop-filter: blur(2px); }
@@ -85,12 +101,22 @@ export class AppComponent {
   readonly cartOpen = signal(false);
   readonly addressPanelOpen = signal(false);
   readonly adminPanelOpen = signal(false);
+  readonly accountMenuOpen = signal(false);
 
   readonly cart = inject(CartService);
 
   showCustomerLogin(): void { this.customerAuthMode.set('login'); }
 
-  openAddressPanel(): void { this.cartOpen.set(false); this.addressPanelOpen.set(true); }
+  openAddressPanel(): void {
+    this.accountMenuOpen.set(false);
+    this.cartOpen.set(false);
+    this.addressPanelOpen.set(true);
+  }
+
+  closeAccountMenu(event: FocusEvent): void {
+    const next = event.relatedTarget as Node | null;
+    if (!(event.currentTarget as HTMLElement).contains(next)) this.accountMenuOpen.set(false);
+  }
 
   onAddressSaved(): void { this.addressPanelOpen.set(false); this.cartOpen.set(true); }
 
@@ -101,6 +127,7 @@ export class AppComponent {
   }
 
   logout(): void {
+    this.accountMenuOpen.set(false);
     void this.auth.logout();
   }
 }
