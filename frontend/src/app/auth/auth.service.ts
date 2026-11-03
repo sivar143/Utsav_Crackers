@@ -1,17 +1,30 @@
-import { Injectable, signal } from '@angular/core';
+import { HttpBackend, HttpClient } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { keycloak } from './keycloak.client';
+
+interface TokenRefreshResponse {
+  access_token: string;
+  refresh_token?: string;
+  expires_in: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly customerAccessToken = signal<string | null>(null);
+  private readonly customerRefreshToken = signal<string | null>(null);
+  private readonly customerExpiresAt = signal(0);
   private readonly customerRoles = signal<string[]>([]);
+  // Bypass the bearer interceptor for refresh calls to prevent recursive token refresh.
+  private readonly rawHttp = new HttpClient(inject(HttpBackend));
+  private refreshInFlight: Promise<string | null> | null = null;
 
   get isAuthenticated(): boolean {
     return !!this.customerAccessToken() || keycloak.authenticated === true;
   }
 
   get username(): string | null {
-    if (this.customerAccessToken()) return this.customerUsername();
+    if (this.customerAccessToken()) return this.customerClaim('preferred_username') ?? this.customerClaim('email');
     return keycloak.tokenParsed?.['preferred_username'] ?? null;
   }
 
@@ -39,8 +52,10 @@ export class AuthService {
     await keycloak.logout({ redirectUri: window.location.origin });
   }
 
-  setCustomerSession(accessToken: string): void {
+  setCustomerSession(accessToken: string, refreshToken: string, expiresIn: number): void {
     this.customerAccessToken.set(accessToken);
+    this.customerRefreshToken.set(refreshToken);
+    this.customerExpiresAt.set(Date.now() + Math.max(0, expiresIn) * 1000);
     const payload = this.decodeToken(accessToken);
     const roles = (payload?.['realm_access'] as { roles?: string[] } | undefined)?.roles ?? [];
     this.customerRoles.set(roles);
@@ -48,12 +63,17 @@ export class AuthService {
 
   clearCustomerSession(): void {
     this.customerAccessToken.set(null);
+    this.customerRefreshToken.set(null);
+    this.customerExpiresAt.set(0);
     this.customerRoles.set([]);
   }
 
   async accessToken(): Promise<string | null> {
     const customerToken = this.customerAccessToken();
-    if (customerToken) return customerToken;
+    if (customerToken) {
+      if (Date.now() < this.customerExpiresAt() - 30_000) return customerToken;
+      return this.refreshCustomerSession();
+    }
     if (!keycloak.authenticated) return null;
     try {
       await keycloak.updateToken(30);
@@ -63,8 +83,25 @@ export class AuthService {
     }
   }
 
-  private customerUsername(): string | null {
-    return this.customerClaim('preferred_username') ?? this.customerClaim('email');
+  private async refreshCustomerSession(): Promise<string | null> {
+    if (this.refreshInFlight) return this.refreshInFlight;
+    const refreshToken = this.customerRefreshToken();
+    if (!refreshToken) {
+      this.clearCustomerSession();
+      return null;
+    }
+    this.refreshInFlight = firstValueFrom(this.rawHttp.post<TokenRefreshResponse>(
+      '/api/v1/auth/customer/refresh', { refreshToken }
+    )).then(response => {
+      this.setCustomerSession(response.access_token, response.refresh_token ?? refreshToken, response.expires_in);
+      return response.access_token;
+    }).catch(() => {
+      this.clearCustomerSession();
+      return null;
+    }).finally(() => {
+      this.refreshInFlight = null;
+    });
+    return this.refreshInFlight;
   }
 
   private customerClaim(name: string): string | null {
