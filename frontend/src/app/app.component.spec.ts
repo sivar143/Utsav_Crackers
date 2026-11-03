@@ -1,7 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { signal } from '@angular/core';
 import { ProductService } from './catalogue/product.service';
 import { AuthService } from './auth/auth.service';
+import { CartService } from './cart/cart.service';
+import { EMPTY_CART } from './cart/cart.model';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
@@ -15,6 +18,15 @@ describe('AppComponent', () => {
           username: null,
           login: jasmine.createSpy('login'),
           logout: jasmine.createSpy('logout')
+        } },
+        { provide: CartService, useValue: {
+          cart: signal(EMPTY_CART),
+          loading: signal(false),
+          error: signal(''),
+          load: jasmine.createSpy('load'),
+          addOne: jasmine.createSpy('addOne'),
+          remove: jasmine.createSpy('remove'),
+          clear: jasmine.createSpy('clear')
         } }
       ]
     }).compileComponents();

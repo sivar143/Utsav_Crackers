@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { catchError, finalize, of } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
+import { CartService } from '../cart/cart.service';
 import { Product } from './product.model';
 import { ProductService } from './product.service';
 
@@ -13,6 +15,8 @@ import { ProductService } from './product.service';
 })
 export class ProductCatalogueComponent implements OnInit {
   private readonly productService = inject(ProductService);
+  readonly auth = inject(AuthService);
+  readonly cart = inject(CartService);
 
   readonly products = signal<Product[]>([]);
   readonly loading = signal(true);
@@ -28,5 +32,13 @@ export class ProductCatalogueComponent implements OnInit {
         finalize(() => this.loading.set(false))
       )
       .subscribe(products => this.products.set(products));
+  }
+
+  addToCart(product: Product): void {
+    if (!this.auth.isAuthenticated) {
+      void this.auth.login();
+      return;
+    }
+    this.cart.addOne(product.id);
   }
 }

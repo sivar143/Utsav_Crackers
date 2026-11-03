@@ -27,6 +27,11 @@
               <span class="fw-semibold">{{ product.price | currency:product.currency:'symbol':'1.2-2' }}</span>
               <span class="text-secondary small">SKU {{ product.sku }}</span>
             </div>
+            <button class="btn btn-outline-success btn-sm mt-3 w-100" type="button"
+              [disabled]="cart.loading()"
+              (click)="addToCart(product)">
+              {{ auth.isAuthenticated ? 'Add to cart' : 'Sign in to add' }}
+            </button>
           </article>
         </div>
       }

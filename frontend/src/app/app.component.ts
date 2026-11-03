@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { ProductCatalogueComponent } from './catalogue/product-catalogue.component';
+import { CartComponent } from './cart/cart.component';
 import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'uc-root',
   standalone: true,
-  imports: [ProductCatalogueComponent],
+  imports: [ProductCatalogueComponent, CartComponent],
   template: `
     <main class="container py-4 py-md-5">
       <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
@@ -24,6 +25,7 @@ import { AuthService } from './auth/auth.service';
         <h1 class="display-5 fw-bold mb-3">Celebrate with care.</h1>
         <p class="lead mb-0">Discover products with transparent pricing and clear fulfilment information.</p>
       </section>
+      <uc-cart />
       <uc-product-catalogue />
       <section class="border-top pt-3 text-secondary small">
         Product availability and delivery eligibility will be confirmed before checkout.
