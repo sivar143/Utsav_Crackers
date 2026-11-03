@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -45,7 +46,7 @@ public class SecurityConfig {
         return converter;
     }
 
-    private Collection<SimpleGrantedAuthority> extractRealmRoles(Jwt jwt) {
+    private Collection<GrantedAuthority> extractRealmRoles(Jwt jwt) {
         Object realmAccessClaim = jwt.getClaims().get("realm_access");
         if (!(realmAccessClaim instanceof Map<?, ?> realmAccess)) {
             return List.of();
