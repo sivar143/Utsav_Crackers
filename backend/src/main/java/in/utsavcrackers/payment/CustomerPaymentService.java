@@ -122,7 +122,7 @@ public class CustomerPaymentService {
                         .multiply(BigDecimal.valueOf(item.getQuantity())).toPlainString()
         )).toList();
 
-        CustomerOrder localOrder = orders.save(new CustomerOrder(subject, addressSnapshot,
+        CustomerOrder localOrder = orders.save(new CustomerOrder(subject, safe(name), safe(email), safe(phone), addressSnapshot,
                 writeJson(itemSnapshots), total, "INR", request.paymentMethod()));
         try {
             RazorpayClient client = new RazorpayClient(keyId, keySecret);
