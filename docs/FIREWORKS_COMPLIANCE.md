@@ -15,7 +15,7 @@ The compliance module is deliberately **default-deny**. It does not infer that f
 - `GET /api/v1/admin/compliance/policies`
 - `POST /api/v1/admin/compliance/policies`
 - `PUT /api/v1/admin/compliance/policies/{id}/approve`
-- `PUT /api/v1/admin/compliance/policies/{id}/revoke`
+- `PUT /api/v1/admin/compliance/policies/{id}/revoke` with `{"reason":"Superseded by a newer order"}`
 - `POST /api/v1/customer/compliance/eligibility-check` with `{"addressId":"..." }`
 
 The eligibility check selects the most specific approved and effective policy: PIN code, then district, then state. It returns separate sale, delivery, transport, and storage flags. Checkout eligibility requires sale, delivery, and transport permission.
