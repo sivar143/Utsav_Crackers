@@ -1,0 +1,46 @@
+.catalogue-section {
+  padding: 2rem 0 3rem;
+}
+
+.catalogue-eyebrow {
+  color: #8b6a2c;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.catalogue-message {
+  border: 1px dashed #cbd5cf;
+  border-radius: 1rem;
+  color: #5d6962;
+  padding: 2.5rem 1.25rem;
+  text-align: center;
+}
+
+.product-card {
+  background: #fff;
+  border: 1px solid #e4e9e5;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 190px;
+  padding: 1.25rem;
+  transition: border-color .15s ease, transform .15s ease;
+}
+
+.product-card:hover {
+  border-color: #a9b9ad;
+  transform: translateY(-2px);
+}
+
+.product-category {
+  color: #718076;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.product-description {
+  line-height: 1.5;
+}
