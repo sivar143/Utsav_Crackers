@@ -18,6 +18,9 @@
       @for (product of products(); track product.id) {
         <div class="col-12 col-sm-6 col-lg-4">
           <article class="product-card h-100">
+            @if (product.imageData) {
+              <img class="product-image mb-3" [src]="product.imageData" [alt]="product.name" loading="lazy">
+            }
             <p class="product-category mb-2">{{ product.categoryName }}</p>
             <h3 class="h5">{{ product.name }}</h3>
             @if (product.description) {
