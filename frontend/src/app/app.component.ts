@@ -30,12 +30,14 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
             <div class="account-menu" (mouseenter)="accountMenuOpen.set(true)" (mouseleave)="accountMenuOpen.set(false)" (focusin)="accountMenuOpen.set(true)" (focusout)="closeAccountMenu($event)">
               <button class="btn btn-outline-secondary btn-sm account-trigger" type="button" aria-haspopup="true"
                 [attr.aria-expanded]="accountMenuOpen()" (click)="openAccountMenu()">
-                {{ auth.username || 'My account' }} <span aria-hidden="true">▾</span>
+                {{ auth.accountLabel || 'My account' }} <span aria-hidden="true">▾</span>
               </button>
               @if (accountMenuOpen()) {
                 <div class="account-dropdown" role="menu">
-                  <div class="account-identity small text-secondary px-3 py-2">{{ auth.username || 'Signed-in customer' }}</div>
-                  <button class="dropdown-item" type="button" role="menuitem" (click)="openAddressPanel()">My addresses</button>
+                  <div class="account-identity small text-secondary px-3 py-2">{{ auth.accountLabel || 'Signed-in account' }}</div>
+                  @if (auth.hasRole('CUSTOMER') && !auth.hasRole('ADMIN')) {
+                    <button class="dropdown-item" type="button" role="menuitem" (click)="openAddressPanel()">My addresses</button>
+                  }
                   <button class="dropdown-item" type="button" role="menuitem" (click)="logout()">Sign out</button>
                 </div>
               }
