@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, effect, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth/auth.service';
 import { CartService } from './cart.service';
 
@@ -8,8 +9,12 @@ import { CartService } from './cart.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    @if (auth.isAuthenticated) {
+    @if (opened) {
       <section class="cart-panel" aria-labelledby="cart-title">
+        <div class="d-flex justify-content-end"><button type="button" class="btn-close" aria-label="Close cart" (click)="close.emit()"></button></div>
+        @if (!auth.isAuthenticated) {
+          <p class="text-secondary">Sign in with your email or phone number to view and save your cart.</p>
+        } @else {
         <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
           <div>
             <p class="cart-eyebrow mb-1">YOUR SELECTION</p>
@@ -48,7 +53,12 @@ import { CartService } from './cart.service';
             <span class="fs-5 fw-bold">{{ cart.cart().subtotal | currency:(cart.cart().currency ?? 'INR'):'symbol':'1.2-2' }}</span>
           </div>
           <p class="small text-secondary mt-2 mb-0">Final price, stock, legal eligibility and delivery options are checked again before checkout.</p>
+          <div class="d-flex justify-content-end mt-4"><button class="btn btn-success" type="button" [disabled]="cart.loading()" (click)="proceedToCheckout()">Proceed to checkout</button></div>
         }
+        @if (checkoutAddress()) {
+          <div class="alert alert-success mt-3 mb-0"><strong>Delivery address selected:</strong><br>{{ checkoutAddress() }}<p class="small mb-0 mt-2">Address is ready. Order review and payment will follow once checkout/order processing is enabled.</p></div>
+        }
+      }
       </section>
     }
   `,
@@ -59,13 +69,29 @@ import { CartService } from './cart.service';
     .cart-line { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-bottom: 1px solid #edf0ed; padding-bottom: .75rem; }
   `]
 })
-export class CartComponent implements OnInit {
+export class CartComponent {
+  @Input() opened = false;
+  @Output() readonly close = new EventEmitter<void>();
+  @Output() readonly requestAddress = new EventEmitter<void>();
   readonly auth = inject(AuthService);
   readonly cart = inject(CartService);
+  private readonly http = inject(HttpClient);
+  readonly checkoutAddress = signal('');
 
-  ngOnInit(): void {
-    if (this.auth.isAuthenticated) {
-      this.cart.load();
-    }
+  constructor() {
+    effect(() => { if (this.auth.isAuthenticated) this.cart.load(); });
+  }
+
+  proceedToCheckout(): void {
+    this.checkoutAddress.set('');
+    this.http.get<Array<{id:string;label:string;recipientName:string;addressLine1:string;city:string;postalCode:string;defaultAddress:boolean}>>('/api/v1/customer/addresses')
+      .subscribe({
+        next: addresses => {
+          if (!addresses.length) { this.requestAddress.emit(); return; }
+          const selected = addresses.find(address => address.defaultAddress) ?? addresses[0];
+          this.checkoutAddress.set(`${selected.label}: ${selected.recipientName}, ${selected.addressLine1}, ${selected.city} – ${selected.postalCode}`);
+        },
+        error: () => this.cart.error.set('Your saved addresses could not be checked. Please sign in again and retry.')
+      });
   }
 }
