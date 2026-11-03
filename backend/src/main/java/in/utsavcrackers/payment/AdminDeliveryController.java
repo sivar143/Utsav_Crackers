@@ -29,7 +29,7 @@ public class AdminDeliveryController {
     @GetMapping
     @Transactional(readOnly = true)
     public List<AdminDeliveryResponse> listPaidOrders() {
-        return orders.findAllByPaymentStatusOrderByCreatedAtDesc("PAID").stream()
+        return orders.findAllByPaymentStatusAndDeliveryStatusNotOrderByCreatedAtDesc("PAID", "DELIVERED").stream()
                 .map(order -> new AdminDeliveryResponse(order.getId(), order.getCustomerSubject(), order.getCustomerName(),
                         order.getCustomerEmail(), order.getCustomerPhone(), order.getDeliveryAddressSnapshot(), order.getItemsSnapshot(), order.getAmount(),
                         order.getCurrency(), order.getPaymentMethod(), order.getCreatedAt(),
