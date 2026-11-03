@@ -31,7 +31,6 @@ import { CustomerAuthComponent } from './auth/customer-auth.component';
             <button class="btn btn-outline-secondary btn-sm" type="button" (click)="logout()">Sign out</button>
           } @else {
             <button class="btn btn-outline-success btn-sm" type="button" (click)="showCustomerLogin()">Sign in</button>
-            <button class="btn btn-success btn-sm" type="button" (click)="showCustomerSignup()">Sign up</button>
             <button class="btn btn-link btn-sm text-secondary" type="button" (click)="adminLogin()">Administrator</button>
           }
         </div>
@@ -94,8 +93,6 @@ export class AppComponent {
   openAddressPanel(): void { this.cartOpen.set(false); this.addressPanelOpen.set(true); }
 
   onAddressSaved(): void { this.addressPanelOpen.set(false); this.cartOpen.set(true); }
-
-  showCustomerSignup(): void { this.customerAuthMode.set('register'); }
 
   closeCustomerAuth(): void { this.customerAuthMode.set(null); }
 
