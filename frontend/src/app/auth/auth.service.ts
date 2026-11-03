@@ -8,7 +8,7 @@ export class AuthService {
   }
 
   get username(): string | null {
-    return keycloak.tokenParsed?.preferred_username ?? null;
+    return keycloak.tokenParsed?.['preferred_username'] ?? null;
   }
 
   hasRole(role: 'ADMIN' | 'CUSTOMER'): boolean {
