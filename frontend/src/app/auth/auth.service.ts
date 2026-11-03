@@ -11,6 +11,10 @@ export class AuthService {
     return keycloak.tokenParsed?.['preferred_username'] ?? null;
   }
 
+  get subject(): string | null {
+    return keycloak.tokenParsed?.sub ?? null;
+  }
+
   hasRole(role: 'ADMIN' | 'CUSTOMER'): boolean {
     return keycloak.realmAccess?.roles?.includes(role) ?? false;
   }

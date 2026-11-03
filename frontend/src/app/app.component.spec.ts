@@ -8,6 +8,7 @@ import { CartService } from './cart/cart.service';
 import { EMPTY_CART } from './cart/cart.model';
 import { CustomerAddressService } from './customer-address/customer-address.service';
 import { InventoryService } from './inventory/inventory.service';
+import { FireworksPolicyService } from './compliance/fireworks-policy.service';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
@@ -30,9 +31,16 @@ describe('AppComponent', () => {
           adjust: jasmine.createSpy('adjust').and.returnValue(of({})),
           listMovements: jasmine.createSpy('listMovements').and.returnValue(of([]))
         } },
+        { provide: FireworksPolicyService, useValue: {
+          list: jasmine.createSpy('list').and.returnValue(of([])),
+          create: jasmine.createSpy('create').and.returnValue(of({})),
+          approve: jasmine.createSpy('approve').and.returnValue(of({})),
+          revoke: jasmine.createSpy('revoke').and.returnValue(of({}))
+        } },
         { provide: AuthService, useValue: {
           isAuthenticated: false,
           username: null,
+          subject: null,
           hasRole: jasmine.createSpy('hasRole').and.returnValue(false),
           login: jasmine.createSpy('login'),
           logout: jasmine.createSpy('logout')
