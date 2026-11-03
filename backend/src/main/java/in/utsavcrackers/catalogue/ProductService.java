@@ -1,5 +1,6 @@
 package in.utsavcrackers.catalogue;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -70,6 +71,15 @@ public class ProductService {
                 || imageData.startsWith("data:image/webp;base64,"))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Product image must be a JPEG, PNG or WebP image no larger than 1 MB.");
+        }
+        try {
+            String encoded = imageData.substring(imageData.indexOf(',') + 1);
+            if (Base64.getDecoder().decode(encoded).length > 1_048_576) {
+                throw new IllegalArgumentException("Image exceeds the size limit.");
+            }
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The product image is invalid or exceeds the 1 MB size limit.");
         }
         return imageData;
     }
