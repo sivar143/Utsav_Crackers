@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ProductCatalogueComponent } from './catalogue/product-catalogue.component';
 import { CartComponent } from './cart/cart.component';
 import { CartService } from './cart/cart.service';
@@ -67,9 +67,6 @@ export class AppComponent {
   readonly addressPanelOpen = signal(false);
 
   private readonly cart = inject(CartService);
-  private readonly cartEffect = effect(() => {
-    if (this.auth.isAuthenticated) this.cart.load();
-  });
 
   showCustomerLogin(): void { this.customerAuthMode.set('login'); }
 
