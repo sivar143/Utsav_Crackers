@@ -22,6 +22,11 @@ public class CategoryService {
                 .toList();
     }
 
+    public CategoryResponse getActive(java.util.UUID id) {
+        return toResponse(categories.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found")));
+    }
+
     @Transactional
     public CategoryResponse create(CategoryUpsertRequest request) {
         String name = request.name().trim();
