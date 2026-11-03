@@ -2,6 +2,7 @@ package in.utsavcrackers.compliance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
 
 import in.utsavcrackers.customer.CustomerAddress;
 import in.utsavcrackers.customer.CustomerAddressRepository;
@@ -41,7 +42,7 @@ class FireworksEligibilityServiceTest {
 
     @Test
     void blocksCheckoutWhenNoApprovedJurisdictionPolicyExists() {
-        when(policies.findEffective("IN-AP|*|533001", PolicyStatus.APPROVED, org.mockito.ArgumentMatchers.any()))
+        when(policies.findEffective("IN-AP|*|533001", eq(PolicyStatus.APPROVED), org.mockito.ArgumentMatchers.any()))
                 .thenReturn(java.util.List.of());
         when(policies.findEffective("IN-AP|east godavari|*", PolicyStatus.APPROVED, org.mockito.ArgumentMatchers.any()))
                 .thenReturn(java.util.List.of());
