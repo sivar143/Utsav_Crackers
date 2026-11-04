@@ -1,33 +1,32 @@
-# Razorpay checkout and payments
+# Cash on delivery
 
-The customer checkout supports Razorpay Standard Checkout with UPI or card as the selected payment instrument.
+Customer checkout currently supports **Cash on Delivery (COD) only**. No online payment gateway is configured or called by the application.
 
-## Local configuration
+## Checkout flow
 
-Copy the three values from the Razorpay **Test Mode** dashboard into the private `.env.local` file (never commit that file):
-
-```dotenv
-RAZORPAY_KEY_ID=rzp_test_...
-RAZORPAY_KEY_SECRET=...
-RAZORPAY_WEBHOOK_SECRET=...
-```
-
-The backend reads these through environment variables. The key secret and webhook secret are server-only; the frontend receives only the publishable key ID as part of the server-created order response.
+- The customer signs in with an email one-time code.
+- The customer selects a saved delivery address.
+- The backend checks the address against the approved fireworks jurisdiction policy and revalidates cart stock and prices.
+- The backend stores an order snapshot with payment method `COD` and payment status `PENDING`, then clears the cart.
+- The customer pays the order total when the order is delivered.
+- The administrator sees COD orders in the delivery queue. When the delivery status is changed to `DELIVERED`, the order payment status is marked `PAID`.
 
 ## API
 
-- `POST /api/v1/customer/payments/orders` — requires a customer bearer token. Body: `{ "addressId": "<saved-address-uuid>", "paymentMethod": "UPI" | "CARD" }`. The server recalculates the cart total from catalogue prices, checks the saved address against the current approved fireworks jurisdiction policy, verifies available inventory, persists an order snapshot and creates a Razorpay order.
-- `POST /api/v1/customer/payments/verify` — requires a customer bearer token. Body contains Razorpay's `razorpay_order_id`, `razorpay_payment_id`, and `razorpay_signature`. The server verifies the signature and fetches the payment from Razorpay; it marks the order paid and clears the cart only when the payment is captured for the exact expected amount and currency.
-- `POST /api/v1/customer/payments/webhook` — public endpoint protected by the `X-Razorpay-Signature` HMAC header. Configure the Razorpay webhook for the `payment.captured` event and use the webhook secret configured above. The webhook is an additional server-to-server reconciliation path.
+- `POST /api/v1/customer/orders` — requires a customer bearer token. Body: `{ "addressId": "<saved-address-uuid>" }`. The backend derives prices and item details from the stored cart; client-supplied totals are not accepted.
+- `GET /api/v1/admin/deliveries` — lists active paid orders and COD orders that have not been delivered.
+- `PUT /api/v1/admin/deliveries/{orderId}/status` — updates delivery state to `PENDING`, `PACKED`, `DISPATCHED`, or `DELIVERED`.
 
-## Important checkout safeguards
+## Email OTP configuration
 
-- Never trust a total supplied by the browser.
-- Never mark an order paid from the browser callback alone.
-- Do not retry a payment if the bank shows a debit but the storefront cannot confirm it; reconcile using the Razorpay payment reference.
-- A valid approved jurisdiction policy and sufficient inventory are required before the payment order is created.
-- Payment credentials must remain in the private environment file or secret manager. Use Test Mode keys during local testing; switch to Live Mode only after merchant onboarding and end-to-end verification.
+Customer verification codes are sent by email. Configure these variables in your private `.env.local` file:
 
-## Local webhook testing
+```dotenv
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_USERNAME=
+SMTP_PASSWORD=
+SMTP_FROM=
+```
 
-Razorpay cannot call a private `localhost` endpoint directly. For webhook testing, expose the local backend through a secure HTTPS tunnel and register the resulting public URL ending in `/api/v1/customer/payments/webhook` in the Razorpay dashboard. Do not expose the MySQL or Keycloak ports through that tunnel.
+No SMS provider or phone OTP configuration is used. Phone numbers remain part of delivery addresses for courier/customer contact.
