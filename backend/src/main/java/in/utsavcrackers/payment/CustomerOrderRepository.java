@@ -1,12 +1,17 @@
 package in.utsavcrackers.payment;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, UUID> {
-    Optional<CustomerOrder> findByRazorpayOrderIdAndCustomerSubject(String razorpayOrderId, String customerSubject);
-    Optional<CustomerOrder> findByRazorpayOrderId(String razorpayOrderId);
-    java.util.List<CustomerOrder> findAllByPaymentStatusAndDeliveryStatusNotOrderByCreatedAtDesc(
-            String paymentStatus, String excludedDeliveryStatus);
+    @Query("""
+            select customerOrder from CustomerOrder customerOrder
+            where customerOrder.deliveryStatus <> :excludedDeliveryStatus
+              and (customerOrder.paymentStatus = 'PAID' or customerOrder.paymentMethod = 'COD')
+            order by customerOrder.createdAt desc
+            """)
+    List<CustomerOrder> findActiveDeliveryOrders(@Param("excludedDeliveryStatus") String excludedDeliveryStatus);
 }
