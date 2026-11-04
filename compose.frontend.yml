@@ -1,0 +1,19 @@
+# Angular/Nginx storefront only. Start compose.local.yml first.
+# The shared network lets nginx.local.conf resolve the backend alias.
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "4200:8080"
+    volumes:
+      - ./frontend/nginx.local.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - local-app
+
+networks:
+  local-app:
+    name: utsav-local-network
+    external: true
