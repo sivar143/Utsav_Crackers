@@ -20,7 +20,7 @@ From the repository root, create the private local environment file if it does n
 Copy-Item .env.local.example .env.local
 ```
 
-Keep populated credentials in `.env.local`; never commit that file or paste secrets into chat. Configure the SMTP settings there to enable email one-time-code delivery. Checkout currently supports cash on delivery only; no payment gateway or SMS provider is configured.
+Keep populated credentials in `.env.local`; never commit that file or paste secrets into chat. Configure the SMTP settings there to enable email one-time-code delivery. Checkout currently supports cash on delivery only; no payment gateway or SMS provider is configured. If you already have an older `.env.local`, remove the obsolete `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, and `TWILIO_FROM_NUMBER` entries.
 
 ## 2. Start infrastructure
 
