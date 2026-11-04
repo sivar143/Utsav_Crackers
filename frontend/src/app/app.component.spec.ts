@@ -76,7 +76,7 @@ describe('AppComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Celebrate with care.');
     expect(fixture.nativeElement.textContent).toContain('Explore our products');
     expect(fixture.nativeElement.textContent).toContain('Sign in');
-    expect(fixture.nativeElement.textContent).toContain('Sign up');
+    expect(fixture.nativeElement.textContent).not.toContain('Sign up');
     expect(fixture.nativeElement.textContent).not.toContain('Welcome back');
     expect(fixture.nativeElement.querySelector('uc-customer-auth')).toBeNull();
   });
