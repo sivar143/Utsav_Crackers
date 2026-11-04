@@ -35,23 +35,31 @@ Application development is intended to take place on the `collaborators` branch.
 
 ## Local Docker deployment
 
-For a complete local deployment of the Angular frontend, Spring Boot backend, MySQL, and Keycloak (with its PostgreSQL database), follow [`docs/local-docker.md`](docs/local-docker.md).
+Local Docker deployment is split into three independently deployable stacks. See [`docs/local-docker.md`](docs/local-docker.md) for the complete runbook.
 
-Quick start on Windows PowerShell:
+Quick start on Windows PowerShell (run from the repository root):
 
 ```powershell
 Copy-Item .env.local.example .env.local
-docker compose --env-file .env.local -f compose.local.yml up -d --build
+
+# Start databases and Keycloak first
+docker compose --env-file .env.local -f compose.local.yml up -d
+
+# Start the backend and frontend independently when required
+docker compose --env-file .env.local -f compose.backend.yml up -d --build
+docker compose --env-file .env.local -f compose.frontend.yml up -d --build
 ```
 
-Open the app at http://localhost:4200. Local-only credentials are documented in the runbook; do not reuse them outside a developer machine.
+Open the app at http://localhost:4200. You can rebuild or stop either application stack without redeploying the other. Local-only credentials are documented in the runbook; do not reuse them outside a developer machine.
 
 ## Cloud deployment
 
 See [`deploy/aws/DEPLOYMENT.md`](deploy/aws/DEPLOYMENT.md) for the AWS EC2 Ubuntu runbook. A private SSH-tunnel-only staging Compose stack is provided for environments without a domain. Public production requires a registered domain, HTTPS certificate, production Keycloak client configuration, and completion of the security, legal, payment, inventory, and fulfilment release gates.
 
 - Development dependencies: `compose.dev.yml`
-- Full local application: `compose.local.yml`
+- Local infrastructure (MySQL and Keycloak): `compose.local.yml`
+- Local backend only: `compose.backend.yml`
+- Local frontend only: `compose.frontend.yml`
 - Private staging: `compose.staging.yml`
 - HTTPS production: `compose.prod.yml`
 - Environment templates: `.env.local.example`, `.env.staging.example`, and `.env.production.example` (never commit populated env files)
