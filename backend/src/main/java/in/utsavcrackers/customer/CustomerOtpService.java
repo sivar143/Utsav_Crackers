@@ -62,7 +62,7 @@ public class CustomerOtpService {
             throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Please wait before requesting another code");
         }
         String code = "%06d".formatted(RANDOM.nextInt(1_000_000));
-        String hash = hash(contact + ":" + code);
+        String hash = hash("EMAIL:" + contact + ":" + code);
         jdbc.update("INSERT INTO customer_login_otps(contact,code_hash,expires_at) VALUES(?,?,?)",
                 contact, hash, java.sql.Timestamp.from(Instant.now().plusSeconds(300)));
         try {
@@ -101,7 +101,7 @@ public class CustomerOtpService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The code is invalid or expired");
         }
         if (!MessageDigest.isEqual(otp.codeHash.getBytes(StandardCharsets.UTF_8),
-                hash(contact + ":" + request.code()).getBytes(StandardCharsets.UTF_8))) {
+                hash("EMAIL:" + contact + ":" + request.code()).getBytes(StandardCharsets.UTF_8))) {
             jdbc.update("UPDATE customer_login_otps SET attempts=attempts+1 WHERE id=?", otp.id);
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The verification code is incorrect");
         }
