@@ -56,7 +56,7 @@ import { DeliveryAdminComponent } from './admin/delivery-admin.component';
         <h1 class="display-5 fw-bold mb-3">Celebrate with care.</h1>
         <p class="lead mb-0">Discover products with transparent pricing and clear fulfilment information.</p>
       </section>
-      @if (customerAuthMode(); as authMode) {
+      @if (customerAuthMode()) {
         <div class="screen-backdrop" (click)="closeCustomerAuth()"></div>
         <div class="screen-dialog" role="dialog" aria-modal="true" aria-label="Customer sign in">
           <uc-customer-auth (close)="closeCustomerAuth()" />
