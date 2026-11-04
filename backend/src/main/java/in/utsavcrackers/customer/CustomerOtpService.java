@@ -24,7 +24,6 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class CustomerOtpService {
     private static final SecureRandom RANDOM = new SecureRandom();
-    private static final String CHANNEL = "EMAIL";
     private final JdbcTemplate jdbc;
     private final ObjectProvider<JavaMailSender> mailSender;
     private final RestClient http = RestClient.create();
@@ -57,15 +56,15 @@ public class CustomerOtpService {
     public void start(OtpStartRequest request) {
         String contact = normalizeEmail(request.contact());
         Integer recent = jdbc.queryForObject(
-                "SELECT COUNT(*) FROM customer_login_otps WHERE channel=? AND contact=? AND created_at > ?",
-                Integer.class, CHANNEL, contact, java.sql.Timestamp.from(Instant.now().minusSeconds(60)));
+                "SELECT COUNT(*) FROM customer_login_otps WHERE contact=? AND created_at > ?",
+                Integer.class, contact, java.sql.Timestamp.from(Instant.now().minusSeconds(60)));
         if (recent != null && recent >= 3) {
             throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Please wait before requesting another code");
         }
         String code = "%06d".formatted(RANDOM.nextInt(1_000_000));
-        String hash = hash(CHANNEL + ":" + contact + ":" + code);
-        jdbc.update("INSERT INTO customer_login_otps(channel,contact,code_hash,expires_at) VALUES(?,?,?,?)",
-                CHANNEL, contact, hash, java.sql.Timestamp.from(Instant.now().plusSeconds(300)));
+        String hash = hash(contact + ":" + code);
+        jdbc.update("INSERT INTO customer_login_otps(contact,code_hash,expires_at) VALUES(?,?,?)",
+                contact, hash, java.sql.Timestamp.from(Instant.now().plusSeconds(300)));
         try {
             JavaMailSender sender = mailSender.getIfAvailable();
             if (smtpHost.isBlank() || sender == null) {
@@ -91,18 +90,18 @@ public class CustomerOtpService {
         String contact = normalizeEmail(request.contact());
         List<OtpRow> rows = jdbc.query("""
                 SELECT id, code_hash, expires_at, attempts, consumed
-                FROM customer_login_otps WHERE channel=? AND contact=?
+                FROM customer_login_otps WHERE contact=?
                 ORDER BY created_at DESC LIMIT 1
                 """, (rs, row) -> new OtpRow(rs.getLong("id"), rs.getString("code_hash"),
                 rs.getTimestamp("expires_at").toInstant(), rs.getInt("attempts"), rs.getBoolean("consumed")),
-                CHANNEL, contact);
+                contact);
         if (rows.isEmpty()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The code is invalid or expired");
         OtpRow otp = rows.get(0);
         if (otp.consumed || otp.expiresAt.isBefore(Instant.now()) || otp.attempts >= 5) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The code is invalid or expired");
         }
         if (!MessageDigest.isEqual(otp.codeHash.getBytes(StandardCharsets.UTF_8),
-                hash(CHANNEL + ":" + contact + ":" + request.code()).getBytes(StandardCharsets.UTF_8))) {
+                hash(contact + ":" + request.code()).getBytes(StandardCharsets.UTF_8))) {
             jdbc.update("UPDATE customer_login_otps SET attempts=attempts+1 WHERE id=?", otp.id);
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The verification code is incorrect");
         }
