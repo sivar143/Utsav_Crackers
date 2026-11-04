@@ -13,4 +13,8 @@ Quantities must be between 1 and 99. Only active products can be added. The serv
 
 ## Deliberate checkout boundary
 
-A cart is not an order, stock reservation, compliance approval, payment, or delivery promise. Prices may change before checkout. The future checkout command must revalidate current prices, stock, customer address, jurisdiction-specific fireworks restrictions, and delivery capability before creating an order.
+A cart is not an order, stock reservation, compliance approval, payment, or delivery promise. Prices may change before checkout. The cash-on-delivery order command revalidates current prices, stock, customer address, jurisdiction-specific fireworks restrictions, and delivery capability before creating an order. It records a COD order and clears the cart only after the order snapshot is saved.
+
+## Cash-on-delivery order placement
+
+- `POST /api/v1/customer/orders` — body: `{"addressId":"<saved-address-uuid>"}`. This creates a COD order after server-side validation. The customer pays the displayed order total when delivery is completed.
