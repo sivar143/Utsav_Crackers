@@ -28,8 +28,8 @@ public class AdminDeliveryController {
 
     @GetMapping
     @Transactional(readOnly = true)
-    public List<AdminDeliveryResponse> listPaidOrders() {
-        return orders.findAllByPaymentStatusAndDeliveryStatusNotOrderByCreatedAtDesc("PAID", "DELIVERED").stream()
+    public List<AdminDeliveryResponse> listDeliveries() {
+        return orders.findActiveDeliveryOrders("DELIVERED").stream()
                 .map(order -> new AdminDeliveryResponse(order.getId(), order.getCustomerSubject(), order.getCustomerName(),
                         order.getCustomerEmail(), order.getCustomerPhone(), order.getDeliveryAddressSnapshot(), order.getItemsSnapshot(), order.getAmount(),
                         order.getCurrency(), order.getPaymentMethod(), order.getCreatedAt(),
@@ -46,8 +46,8 @@ public class AdminDeliveryController {
         }
         CustomerOrder order = orders.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found."));
-        if (!"PAID".equals(order.getPaymentStatus())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Only paid orders can enter the delivery queue.");
+        if (!"PAID".equals(order.getPaymentStatus()) && !"COD".equals(order.getPaymentMethod())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Only paid or cash-on-delivery orders can enter the delivery queue.");
         }
         order.updateDeliveryStatus(request.status());
         return new AdminDeliveryResponse(order.getId(), order.getCustomerSubject(), order.getCustomerName(),
