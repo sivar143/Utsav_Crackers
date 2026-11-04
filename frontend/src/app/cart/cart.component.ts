@@ -100,8 +100,6 @@ interface CheckoutAddress {
     .quantity-value { min-width: 1.5rem; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
     .cart-eyebrow { color: #8b6a2c; font-size: .72rem; font-weight: 700; letter-spacing: .16em; }
     .cart-lines { display: grid; gap: .75rem; }
-    .payment-choice { display: block; height: 100%; border: 1px solid #dfe7e1; border-radius: .75rem; padding: .8rem; cursor: pointer; }
-    .payment-choice.selected { border-color: #198754; background: #eff8f1; }
     .cart-line { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-bottom: 1px solid #edf0ed; padding-bottom: .75rem; }
   `]
 })
