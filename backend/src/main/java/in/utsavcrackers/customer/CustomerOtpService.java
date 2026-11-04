@@ -6,7 +6,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.UUID;\nimport org.slf4j.Logger;\nimport org.slf4j.LoggerFactory;\nimport org.springframework.web.client.RestClientResponseException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -115,28 +115,41 @@ public class CustomerOtpService {
     private Map<String, Object> issueCustomerSession(String email) {
         List<String> subjects = jdbc.query("SELECT keycloak_subject FROM customer_profiles WHERE email=?",
                 (rs, row) -> rs.getString(1), email);
-        String subject = subjects.isEmpty() ? createCustomer(email) : subjects.get(0);
-        String temporaryPassword = UUID.randomUUID() + "A9!";
-        String adminToken = adminToken();
-        Map<?, ?> keycloakUser = http.get().uri(keycloakUrl + "/admin/realms/" + realm + "/users/" + subject)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken).retrieve().body(Map.class);
-        String username = (String) keycloakUser.get("username");
-        http.put().uri(keycloakUrl + "/admin/realms/" + realm + "/users/" + subject + "/reset-password")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Map.of("type", "password", "value", temporaryPassword, "temporary", false))
-                .retrieve().toBodilessEntity();
-
-        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-        form.add("grant_type", "password");
-        form.add("client_id", "utsav-web");
-        form.add("username", username);
-        form.add("password", temporaryPassword);
         try {
-            return http.post().uri(keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token")
+            String subject = subjects.isEmpty() ? createCustomer(email) : subjects.get(0);
+            String temporaryPassword = UUID.randomUUID() + "A9!";
+            String adminToken = adminToken();
+            Map<?, ?> keycloakUser = http.get().uri(keycloakUrl + "/admin/realms/" + realm + "/users/" + subject)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken).retrieve().body(Map.class);
+            if (keycloakUser == null || !(keycloakUser.get("username") instanceof String username) || username.isBlank()) {
+                throw new IllegalStateException("Keycloak returned no username for the customer identity");
+            }
+            http.put().uri(keycloakUrl + "/admin/realms/" + realm + "/users/" + subject + "/reset-password")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Map.of("type", "password", "value", temporaryPassword, "temporary", false))
+                    .retrieve().toBodilessEntity();
+            MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+            form.add("grant_type", "password");
+            form.add("client_id", "utsav-web");
+            form.add("username", username);
+            form.add("password", temporaryPassword);
+            form.add("scope", "openid");
+            Map<String, Object> token = http.post()
+                    .uri(keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token")
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED).body(form).retrieve().body(Map.class);
+            if (token == null || !(token.get("access_token") instanceof String)) {
+                throw new IllegalStateException("Keycloak did not return an access token");
+            }
+            return token;
+        } catch (RestClientResponseException ex) {
+            log.error("Keycloak customer session request failed: HTTP {} - {}", ex.getStatusCode().value(), ex.getResponseBodyAsString());
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                    "Identity-provider sign-in failed after verification (HTTP " + ex.getStatusCode().value() + ")");
         } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Identity-provider sign-in failed after verification");
+            log.error("Could not issue a Keycloak customer session", ex);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                    "Identity-provider sign-in failed after verification. Check backend Keycloak connectivity and client settings.");
         }
     }
 

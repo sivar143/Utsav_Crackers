@@ -17,8 +17,8 @@ import { DeliveryAdminComponent } from './admin/delivery-admin.component';
     InventoryAdminComponent, ComplianceAdminComponent, CustomerAuthComponent, DeliveryAdminComponent],
   template: `
     <main class="page-shell container py-4 py-md-5">
-      <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-        <a class="brand-mark text-decoration-none" href="/" aria-label="Utsav Crackers home">UTSAV CRACKERS</a>
+      <header class="site-header d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <a class="brand-mark text-decoration-none" href="/" aria-label="Utsav Crackers home"><img src="/assets/utsav-crackers-logo.webp" alt="Utsav Crackers" /></a>
         <div class="d-flex align-items-center gap-2">
           @if (!auth.hasRole('ADMIN')) {
           <button class="btn btn-outline-success btn-sm position-relative" type="button" aria-label="Open shopping cart" (click)="cartOpen.set(true)">
@@ -47,7 +47,7 @@ import { DeliveryAdminComponent } from './admin/delivery-admin.component';
             </div>
           } @else {
             <button class="btn btn-outline-success btn-sm" type="button" (click)="showCustomerLogin()">Sign in</button>
-            <button class="btn btn-link btn-sm text-secondary" type="button" (click)="adminLogin()">Administrator</button>
+            <button class="btn btn-outline-warning btn-sm administrator-button" type="button" (click)="adminLogin()">Administrator</button>
           }
         </div>
       </header>
@@ -87,13 +87,13 @@ import { DeliveryAdminComponent } from './admin/delivery-admin.component';
     </main>
   `,
   styles: [`
-    .page-shell { position: relative; z-index: 0; }\n    .brand-mark { color: #17372b; font-size: .9rem; font-weight: 800; letter-spacing: .14em; }
+    .page-shell { position: relative; z-index: 0; }\n    .site-header { position: relative; z-index: 30; isolation: isolate; min-height: 76px; }\n    .brand-mark { display: inline-flex; align-items: center; position: relative; z-index: 31; }\n    .brand-mark img { display: block; width: clamp(68px, 8vw, 104px); height: clamp(68px, 8vw, 104px); object-fit: contain; }\n    .site-header > div { position: relative; z-index: 32; }\n    .administrator-button { position: relative; z-index: 33; pointer-events: auto; cursor: pointer; font-weight: 700; }
     .account-menu { position: relative; }
     .account-trigger { max-width: min(42vw, 280px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .account-dropdown { position: absolute; z-index: 1100; top: calc(100% + .35rem); right: 0; min-width: 190px; padding: .35rem 0; background: #fff; border: 1px solid #e4e9e5; border-radius: .75rem; box-shadow: 0 .75rem 2rem rgba(0,0,0,.14); }
     .account-identity { border-bottom: 1px solid #edf0ed; overflow-wrap: anywhere; }
     .account-dropdown .dropdown-item { padding: .55rem 1rem; }
-    .hero { background: linear-gradient(118deg, #163a2d 0%, #20513d 58%, #8a642d 140%); color: #fff; border: 1px solid rgba(229,190,112,.35); box-shadow: 0 1rem 2.5rem rgba(36,65,48,.12); }
+    .hero { background: linear-gradient(118deg, rgba(22,58,45,.94) 0%, rgba(32,81,61,.92) 58%, rgba(138,100,45,.9) 140%); color: #fff; border: 1px solid rgba(229,190,112,.35); box-shadow: 0 1rem 2.5rem rgba(36,65,48,.12); }
     .eyebrow { color: #f2c879; letter-spacing: .18em; font-size: .8rem; font-weight: 700; }
     .screen-backdrop { position: fixed; inset: 0; z-index: 1080; background: rgba(12, 24, 19, .58); backdrop-filter: blur(2px); }
     .screen-dialog { position: fixed; z-index: 1081; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(760px, calc(100vw - 2rem)); max-height: 88vh; overflow-y: auto; background: #fffdf8; border: 1px solid rgba(174,139,76,.24); border-radius: 1rem; padding: 1.25rem; box-shadow: 0 1.5rem 4rem rgba(0,0,0,.24); }

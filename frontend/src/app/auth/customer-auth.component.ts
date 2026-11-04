@@ -93,7 +93,7 @@ export class CustomerAuthComponent {
           this.codeSent.set(true);
           this.message.set('Verification code sent.');
         },
-        error: response => this.error.set(response?.error?.detail ?? 'Could not send the verification code. Check the delivery configuration and try again.')
+        error: response => this.error.set(response?.error?.detail ?? response?.error?.message ?? 'Could not send the verification code. Check the delivery configuration and try again.')
       });
   }
 
@@ -112,7 +112,7 @@ export class CustomerAuthComponent {
         this.auth.setCustomerSession(response.access_token, response.refresh_token ?? '', response.expires_in);
         this.close.emit();
       },
-      error: response => this.error.set(response?.error?.detail ?? 'Verification failed. The code may have expired.')
+      error: response => this.error.set(response?.error?.detail ?? response?.error?.message ?? (response?.status === 502 ? 'Your code was accepted, but the sign-in service is temporarily unavailable. Please try the same code again.' : 'Verification failed. The code may have expired.'))
     });
   }
 
