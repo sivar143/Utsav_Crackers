@@ -47,7 +47,6 @@ import { DeliveryAdminComponent } from './admin/delivery-admin.component';
             </div>
           } @else {
             <button class="btn btn-outline-success btn-sm" type="button" (click)="showCustomerLogin()">Sign in</button>
-            <button class="btn btn-success btn-sm" type="button" (click)="showCustomerRegistration()">Sign up</button>
             <button class="btn btn-link btn-sm text-secondary" type="button" (click)="adminLogin()">Administrator</button>
           }
         </div>
