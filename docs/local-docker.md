@@ -20,7 +20,7 @@ From the repository root, create the private local environment file if it does n
 Copy-Item .env.local.example .env.local
 ```
 
-Keep populated credentials in `.env.local`; never commit that file or paste secrets into chat. Configure SMTP/Twilio and Razorpay test credentials there if you want to test OTP delivery and payment flows.
+Keep populated credentials in `.env.local`; never commit that file or paste secrets into chat. Configure the SMTP settings there to enable email one-time-code delivery. Checkout currently supports cash on delivery only; no payment gateway or SMS provider is configured.
 
 ## 2. Start infrastructure
 
