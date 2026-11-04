@@ -10,7 +10,7 @@ A production-oriented fireworks e-commerce platform.
 - **Identity and access:** Keycloak with Admin and Customer roles
 - **Edge/reverse proxy:** Nginx
 - **Local infrastructure:** Docker Compose
-- **Payments:** A real UPI-capable payment provider (Razorpay or Cashfree), with server-side verification, signed webhook validation, and idempotent processing
+- **Payments:** Cash on Delivery (COD) for the current checkout flow
 
 ## Product scope
 
@@ -20,8 +20,7 @@ Fireworks-specific sales, storage, and transportation restrictions must be enfor
 
 ## Engineering principles
 
-- Do not simulate successful payments. Orders are paid only after verified provider confirmation.
-- Verify payment webhook signatures and make webhook processing idempotent.
+- COD orders remain pending payment until delivery is confirmed and cash collection is recorded by the delivery workflow.
 - Enforce authorization on the backend, not only in the UI.
 - Keep secrets out of source control and provide environment-based configuration.
 - Include automated tests, health checks, database migrations, and operational documentation.
@@ -66,4 +65,4 @@ See [`deploy/aws/DEPLOYMENT.md`](deploy/aws/DEPLOYMENT.md) for the AWS EC2 Ubunt
 
 ## Status
 
-The application is under active development. Deployment scaffolding is provided, but the platform is not yet ready for real customer orders or payments.
+The application is under active development. Checkout currently supports cash on delivery only; deployment scaffolding is provided, but the platform is not yet ready for real customer orders.
