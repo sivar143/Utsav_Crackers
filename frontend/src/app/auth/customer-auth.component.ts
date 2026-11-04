@@ -30,14 +30,8 @@ interface CustomerTokenResponse {
         @if (message()) { <div class="alert alert-success py-2" role="status">{{ message() }}</div> }
         @if (!codeSent()) {
           <form [formGroup]="contactForm" (ngSubmit)="sendCode()" novalidate>
-            @if (channel() === 'EMAIL') {
-              <label class="form-label" for="otp-email">Email address</label>
-              <input id="otp-email" class="form-control" type="email" formControlName="email" autocomplete="email" placeholder="you@example.com">
-            } @else {
-              <label class="form-label" for="otp-phone">Mobile number</label>
-              <input id="otp-phone" class="form-control" type="tel" formControlName="phone" autocomplete="tel" placeholder="+919876543210">
-              <div class="form-text">Include country code, for example +91.</div>
-            }
+            <label class="form-label" for="otp-email">Email address</label>
+            <input id="otp-email" class="form-control" type="email" formControlName="email" autocomplete="email" placeholder="you@example.com">
             <button class="btn btn-success mt-3" type="submit" [disabled]="busy() || activeContactInvalid()">{{ busy() ? 'Sending code…' : 'Send verification code' }}</button>
           </form>
         } @else {
@@ -46,7 +40,7 @@ interface CustomerTokenResponse {
             <label class="form-label" for="customer-otp">Verification code</label>
             <input id="customer-otp" class="form-control" formControlName="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
             <button class="btn btn-success mt-3" type="submit" [disabled]="busy() || codeForm.invalid">{{ busy() ? 'Verifying…' : 'Verify and continue' }}</button>
-            <button class="btn btn-link mt-3" type="button" [disabled]="busy()" (click)="resetCode()">Use a different contact</button>
+            <button class="btn btn-link mt-3" type="button" [disabled]="busy()" (click)="resetCode()">Change email address</button>
           </form>
         }
         <p class="small text-secondary mt-3 mb-0">New customers are registered automatically after successful verification.</p>
@@ -86,7 +80,7 @@ export class CustomerAuthComponent {
 
   sendCode(): void {
     if (this.busy() || this.activeContactInvalid()) {
-      (this.channel() === 'EMAIL' ? this.contactForm.controls.email : this.contactForm.controls.phone).markAsTouched();
+      this.contactForm.controls.email.markAsTouched();
       return;
     }
     const contact = this.contactForm.controls.email.value.trim();
