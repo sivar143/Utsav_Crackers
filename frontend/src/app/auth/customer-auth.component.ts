@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -21,7 +21,7 @@ interface CustomerTokenResponse {
         <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
           <div>
             <p class="auth-eyebrow mb-1">YOUR UTSAV ACCOUNT</p>
-            <h2 id="customer-auth-title" class="h4 mb-1">{{ mode() === 'register' ? 'Create your account' : 'Sign in or create an account' }}</h2>
+            <h2 id="customer-auth-title" class="h4 mb-1">Sign in or create an account</h2>
             <p class="text-secondary small mb-0">Continue securely with a one-time code sent to your email. No password required.</p>
           </div>
           <button class="btn-close" type="button" aria-label="Close account panel" (click)="close.emit()"></button>
@@ -53,13 +53,11 @@ interface CustomerTokenResponse {
   `]
 })
 export class CustomerAuthComponent {
-  @Input() set initialMode(value: 'login' | 'register') { this.mode.set(value); }
   @Output() readonly close = new EventEmitter<void>();
 
   readonly auth = inject(AuthService);
   private readonly http = inject(HttpClient);
   private readonly fb = inject(FormBuilder);
-  readonly mode = signal<'login' | 'register'>('login');
   readonly busy = signal(false);
   readonly codeSent = signal(false);
   readonly destination = signal('');
