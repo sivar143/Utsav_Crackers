@@ -147,6 +147,8 @@ public class CustomerOtpService {
                 throw new IllegalStateException("Keycloak did not return an access token");
             }
             return token;
+        } catch (ResponseStatusException ex) {
+            throw ex;
         } catch (RestClientResponseException ex) {
             log.error("Keycloak customer session request failed: HTTP {} - {}", ex.getStatusCode().value(), ex.getResponseBodyAsString());
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
