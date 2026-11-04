@@ -19,7 +19,8 @@
 - [x] Persistent customer cart API and Angular cart summary
 - [x] Customer-owned Indian address book API and Angular address manager
 - [ ] Product images, pricing history, search, and availability
-- [ ] Checkout validation
+- [x] Checkout validation for address eligibility and inventory
+- [x] Cash-on-delivery order creation and administrator delivery queue
 
 ## Phase 3 — Orders, inventory, and compliance
 - [x] Inventory balance and append-only adjustment ledger API and admin UI
@@ -30,10 +31,9 @@
 - [ ] Shipment and delivery tracking
 
 ## Phase 4 — Payments
-- [ ] Select and configure provider credentials
-- [ ] Create payment intents server-side
-- [ ] Verify signed webhooks and idempotency
-- [ ] Refunds, reconciliation, and payment audit trail
+- [x] Cash-on-delivery order capture and payment-pending state
+- [x] Mark COD orders paid after delivery completion
+- [ ] Optional online payment integration (only if required in a future phase)
 
 ## Phase 5 — Operations and hardening
 - [ ] Promotions, notifications, and reporting
@@ -41,4 +41,4 @@
 - [ ] Integration and end-to-end tests
 - [ ] Health checks, backup/restore, and deployment runbooks
 
-Every feature must include migrations, API validation, authorization, tests, and operator documentation. Payment and compliance features must not be enabled in production until provider and legal configurations are reviewed.
+Every feature must include migrations, API validation, authorization, tests, and operator documentation. COD and compliance features must not be enabled in production until fulfilment, legal, inventory, and operational configurations are reviewed.
