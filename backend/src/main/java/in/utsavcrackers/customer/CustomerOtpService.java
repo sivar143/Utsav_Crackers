@@ -6,7 +6,10 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;\nimport org.slf4j.Logger;\nimport org.slf4j.LoggerFactory;\nimport org.springframework.web.client.RestClientResponseException;
+import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CustomerOtpService {
+    private static final Logger log = LoggerFactory.getLogger(CustomerOtpService.class);
     private static final SecureRandom RANDOM = new SecureRandom();
     private final JdbcTemplate jdbc;
     private final ObjectProvider<JavaMailSender> mailSender;
@@ -81,6 +85,7 @@ public class CustomerOtpService {
         } catch (ResponseStatusException ex) {
             throw ex;
         } catch (Exception ex) {
+            log.error("Email OTP delivery failed for configured SMTP provider", ex);
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
                     "The verification code could not be delivered. Check the configured email provider.");
         }

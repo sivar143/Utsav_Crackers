@@ -17,9 +17,7 @@ body {
   min-height: 100vh;
   color: #20342a;
   background-color: #3b0908;
-  background-image:
-    linear-gradient(135deg, rgba(8, 18, 14, .58), rgba(12, 20, 17, .66)),
-    url("https://images.unsplash.com/photo-1503847977400-9b90e320db5e?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  background-image: linear-gradient(180deg, rgba(28, 0, 0, .12), rgba(28, 0, 0, .22)), url('/assets/diwali-background.webp');
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
