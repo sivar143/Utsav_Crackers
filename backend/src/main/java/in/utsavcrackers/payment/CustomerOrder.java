@@ -39,10 +39,6 @@ public class CustomerOrder {
     private String paymentStatus = "PENDING";
     @Column(name = "delivery_status", nullable = false, length = 24)
     private String deliveryStatus = "PENDING";
-    @Column(name = "razorpay_order_id", length = 64, unique = true)
-    private String razorpayOrderId;
-    @Column(name = "razorpay_payment_id", length = 64, unique = true)
-    private String razorpayPaymentId;
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -53,11 +49,6 @@ public class CustomerOrder {
     private Instant updatedAt;
 
     protected CustomerOrder() {}
-
-    public CustomerOrder(String customerSubject, String addressSnapshot, String itemsSnapshot,
-            BigDecimal amount, String currency, String paymentMethod) {
-        this(customerSubject, null, null, null, addressSnapshot, itemsSnapshot, amount, currency, paymentMethod);
-    }
 
     public CustomerOrder(String customerSubject, String customerName, String customerEmail, String customerPhone,
             String addressSnapshot, String itemsSnapshot, BigDecimal amount, String currency, String paymentMethod) {
@@ -72,16 +63,14 @@ public class CustomerOrder {
         this.paymentMethod = paymentMethod;
     }
 
-    public void setRazorpayOrderId(String value) { this.razorpayOrderId = value; }
-    public void markPaid(String paymentId) {
-        if (!"PAID".equals(paymentStatus)) {
+    public void updateDeliveryStatus(String status) {
+        this.deliveryStatus = status;
+        if ("COD".equals(paymentMethod) && "DELIVERED".equals(status) && !"PAID".equals(paymentStatus)) {
             paymentStatus = "PAID";
-            razorpayPaymentId = paymentId;
             paidAt = Instant.now();
         }
     }
-    public void markFailed() { if (!"PAID".equals(paymentStatus)) paymentStatus = "FAILED"; }
-    public void updateDeliveryStatus(String status) { this.deliveryStatus = status; }
+
     public UUID getId() { return id; }
     public String getDeliveryAddressSnapshot() { return deliveryAddressSnapshot; }
     public String getItemsSnapshot() { return itemsSnapshot; }
@@ -95,6 +84,4 @@ public class CustomerOrder {
     public String getCurrency() { return currency; }
     public String getPaymentMethod() { return paymentMethod; }
     public String getPaymentStatus() { return paymentStatus; }
-    public String getRazorpayOrderId() { return razorpayOrderId; }
-    public String getRazorpayPaymentId() { return razorpayPaymentId; }
 }
