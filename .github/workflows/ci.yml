@@ -76,6 +76,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate development Compose file
         run: docker compose --env-file .env.example -f compose.dev.yml config --quiet
+      - name: Validate local infrastructure Compose file
+        run: docker compose --env-file .env.local.example -f compose.local.yml config --quiet
+      - name: Validate local backend Compose file
+        run: docker compose --env-file .env.local.example -f compose.backend.yml config --quiet
+      - name: Validate local frontend Compose file
+        run: docker compose --env-file .env.local.example -f compose.frontend.yml config --quiet
       - name: Validate private staging Compose file
         run: docker compose --env-file .env.staging.example -f compose.staging.yml config --quiet
       - name: Validate production Compose file
