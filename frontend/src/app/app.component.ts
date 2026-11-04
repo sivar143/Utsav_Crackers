@@ -59,7 +59,7 @@ import { DeliveryAdminComponent } from './admin/delivery-admin.component';
       @if (customerAuthMode(); as authMode) {
         <div class="screen-backdrop" (click)="closeCustomerAuth()"></div>
         <div class="screen-dialog" role="dialog" aria-modal="true" aria-label="Customer sign in">
-          <uc-customer-auth [initialMode]="authMode" (close)="closeCustomerAuth()" />
+          <uc-customer-auth (close)="closeCustomerAuth()" />
         </div>
       }
       @if (adminPanelOpen() && auth.hasRole('ADMIN')) {
@@ -103,7 +103,7 @@ import { DeliveryAdminComponent } from './admin/delivery-admin.component';
 })
 export class AppComponent {
   readonly auth = inject(AuthService);
-  readonly customerAuthMode = signal<'login' | 'register' | null>(null);
+  readonly customerAuthMode = signal<'login' | null>(null);
   readonly cartOpen = signal(false);
   readonly addressPanelOpen = signal(false);
   readonly adminPanelOpen = signal(false);
@@ -113,8 +113,6 @@ export class AppComponent {
   readonly cart = inject(CartService);
 
   showCustomerLogin(): void { this.customerAuthMode.set('login'); }
-
-  showCustomerRegistration(): void { this.customerAuthMode.set('register'); }
 
   openAccountMenu(): void { this.accountMenuOpen.set(true); }
 
