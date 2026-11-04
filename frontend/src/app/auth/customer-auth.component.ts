@@ -22,17 +22,13 @@ interface CustomerTokenResponse {
           <div>
             <p class="auth-eyebrow mb-1">YOUR UTSAV ACCOUNT</p>
             <h2 id="customer-auth-title" class="h4 mb-1">{{ mode() === 'register' ? 'Create your account' : 'Sign in or create an account' }}</h2>
-            <p class="text-secondary small mb-0">Continue securely with a one-time verification code. No password required.</p>
+            <p class="text-secondary small mb-0">Continue securely with a one-time code sent to your email. No password required.</p>
           </div>
           <button class="btn-close" type="button" aria-label="Close account panel" (click)="close.emit()"></button>
         </div>
         @if (error()) { <div class="alert alert-danger py-2" role="alert">{{ error() }}</div> }
         @if (message()) { <div class="alert alert-success py-2" role="status">{{ message() }}</div> }
         @if (!codeSent()) {
-          <div class="d-flex flex-wrap gap-2 mb-3" role="group" aria-label="Verification method">
-            <button type="button" class="btn" [class.btn-success]="channel() === 'EMAIL'" [class.btn-outline-success]="channel() !== 'EMAIL'" (click)="selectChannel('EMAIL')">Continue with email</button>
-            <button type="button" class="btn" [class.btn-success]="channel() === 'PHONE'" [class.btn-outline-success]="channel() !== 'PHONE'" (click)="selectChannel('PHONE')">Continue with phone</button>
-          </div>
           <form [formGroup]="contactForm" (ngSubmit)="sendCode()" novalidate>
             @if (channel() === 'EMAIL') {
               <label class="form-label" for="otp-email">Email address</label>
@@ -70,7 +66,6 @@ export class CustomerAuthComponent {
   private readonly http = inject(HttpClient);
   private readonly fb = inject(FormBuilder);
   readonly mode = signal<'login' | 'register'>('login');
-  readonly channel = signal<'EMAIL' | 'PHONE'>('EMAIL');
   readonly busy = signal(false);
   readonly codeSent = signal(false);
   readonly destination = signal('');
@@ -78,21 +73,15 @@ export class CustomerAuthComponent {
   readonly message = signal('');
 
   readonly contactForm = this.fb.nonNullable.group({
-    email: ['', [Validators.email, Validators.maxLength(254)]],
-    phone: ['', [Validators.pattern(/^\\+?[1-9][0-9]{7,14}$/)]]
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]]
   });
   readonly codeForm = this.fb.nonNullable.group({
     code: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]]
   });
 
   activeContactInvalid(): boolean {
-    const control = this.channel() === 'EMAIL' ? this.contactForm.controls.email : this.contactForm.controls.phone;
+    const control = this.contactForm.controls.email;
     return !control.value || control.invalid;
-  }
-
-  selectChannel(channel: 'EMAIL' | 'PHONE'): void {
-    this.channel.set(channel);
-    this.error.set('');
   }
 
   sendCode(): void {
@@ -100,13 +89,11 @@ export class CustomerAuthComponent {
       (this.channel() === 'EMAIL' ? this.contactForm.controls.email : this.contactForm.controls.phone).markAsTouched();
       return;
     }
-    const contact = this.channel() === 'EMAIL'
-      ? this.contactForm.controls.email.value.trim()
-      : this.contactForm.controls.phone.value.trim();
+    const contact = this.contactForm.controls.email.value.trim();
     this.busy.set(true);
     this.error.set('');
     this.message.set('');
-    this.http.post('/api/v1/auth/customer/otp/start', { channel: this.channel(), contact })
+    this.http.post('/api/v1/auth/customer/otp/start', { contact })
       .pipe(finalize(() => this.busy.set(false)))
       .subscribe({
         next: () => {
@@ -126,7 +113,6 @@ export class CustomerAuthComponent {
     this.busy.set(true);
     this.error.set('');
     this.http.post<CustomerTokenResponse>('/api/v1/auth/customer/otp/verify', {
-      channel: this.channel(),
       contact: this.destination(),
       code: this.codeForm.controls.code.value
     }).pipe(finalize(() => this.busy.set(false))).subscribe({
