@@ -1,15 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
   color-scheme: light;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Manrope', 'DM Sans', sans-serif;
   background: #3b0908;
   color: #20342a;
 }
 
 html {
   min-height: 100%;
-  background: #101713;
+  background: #3b0908;
 }
 
 body {
@@ -38,4 +38,14 @@ button, input, select, textarea {
     background-attachment: scroll;
     background-position: center top;
   }
+}
+
+html { scroll-behavior:smooth; scroll-padding-top:1.5rem; }
+button, a, input, select { -webkit-tap-highlight-color:transparent; }
+:focus-visible { outline:3px solid #d9a94d !important; outline-offset:3px; }
+.btn { transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease; }
+.btn:not(:disabled):hover { transform:translateY(-1px); box-shadow:0 .4rem 1rem rgba(25,35,28,.12); }
+.btn:disabled { cursor:not-allowed; }
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
 }
