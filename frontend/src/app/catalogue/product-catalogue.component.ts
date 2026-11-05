@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, computed, inject, signal } from '@angular/core';
 import { catchError, finalize, of } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { CartService } from '../cart/cart.service';
@@ -22,6 +22,25 @@ export class ProductCatalogueComponent implements OnInit {
   readonly products = signal<Product[]>([]);
   readonly loading = signal(true);
   readonly error = signal('');
+  readonly searchTerm = signal('');
+  readonly selectedCategory = signal('All');
+  readonly sortOrder = signal<'featured' | 'name' | 'price-low' | 'price-high'>('featured');
+  readonly categories = computed(() => ['All', ...new Set(this.products().map(product => product.categoryName).filter(Boolean).sort((a, b) => a.localeCompare(b)))]);
+  readonly filteredProducts = computed(() => {
+    const term = this.searchTerm().trim().toLocaleLowerCase();
+    const category = this.selectedCategory();
+    const filtered = this.products().filter(product =>
+      (category === 'All' || product.categoryName === category) &&
+      (!term || [product.name, product.description ?? '', product.categoryName, product.sku]
+        .some(value => value.toLocaleLowerCase().includes(term)))
+    );
+    switch (this.sortOrder()) {
+      case 'name': return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+      case 'price-low': return [...filtered].sort((a, b) => a.price - b.price);
+      case 'price-high': return [...filtered].sort((a, b) => b.price - a.price);
+      default: return filtered;
+    }
+  });
 
   ngOnInit(): void {
     this.productService.listActive()
