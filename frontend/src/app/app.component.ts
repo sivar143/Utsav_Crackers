@@ -17,8 +17,9 @@ import { DeliveryAdminComponent } from './admin/delivery-admin.component';
     InventoryAdminComponent, ComplianceAdminComponent, CustomerAuthComponent, DeliveryAdminComponent],
   template: `
     <main class="page-shell container py-4 py-md-5">
+      <div class="announcement-bar"><span class="announcement-dot"></span> Celebrate the season with care <span>✦</span> Shop responsibly</div>
       <header class="site-header d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-        <a class="brand-mark text-decoration-none" href="/" aria-label="Utsav Crackers home"><img src="/assets/utsav-crackers-logo.webp" alt="Utsav Crackers" /></a>
+        <a class="brand-mark text-decoration-none" href="/" aria-label="Utsav Crackers home"><img src="/assets/utsav-crackers-logo.webp" alt="Utsav Crackers" /><span class="visually-hidden">UTSAV CRACKERS</span></a>
         <div class="d-flex align-items-center gap-2">
           @if (!auth.hasRole('ADMIN')) {
           <button class="btn btn-outline-success btn-sm position-relative" type="button" aria-label="Open shopping cart" (click)="cartOpen.set(true)">
@@ -51,10 +52,15 @@ import { DeliveryAdminComponent } from './admin/delivery-admin.component';
           }
         </div>
       </header>
-      <section class="hero rounded-4 p-4 p-md-5">
-        <p class="eyebrow mb-2">CELEBRATE RESPONSIBLY</p>
-        <h1 class="display-5 fw-bold mb-3">Celebrate with care.</h1>
-        <p class="lead mb-0">Discover products with transparent pricing and clear fulfilment information.</p>
+      <section class="hero rounded-4 p-4 p-md-5" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow mb-2">✦ THE FESTIVE COLLECTION</p>
+          <h1 id="hero-title" class="display-5 fw-bold mb-3">Make every celebration <span>brighter.</span></h1>
+          <p class="lead mb-4">Discover the Utsav collection with transparent pricing and clear fulfilment information.</p>
+          <a class="btn hero-cta" href="#catalogue-title">Explore the collection <span aria-hidden="true">→</span></a>
+          <div class="hero-trust"><span>✦ Thoughtfully curated</span><span>✦ Clear pricing</span><span>✦ Cash on delivery</span></div>
+        </div>
+        <div class="hero-art" aria-hidden="true"><span class="hero-orbit orbit-one"></span><span class="hero-orbit orbit-two"></span><span class="hero-star star-one">✦</span><span class="hero-star star-two">✧</span><span class="hero-diya">🪔</span></div>
       </section>
       @if (customerAuthMode()) {
         <div class="screen-backdrop" (click)="closeCustomerAuth()"></div>
@@ -87,18 +93,38 @@ import { DeliveryAdminComponent } from './admin/delivery-admin.component';
     </main>
   `,
   styles: [`
-    .page-shell { position: relative; z-index: 0; }\n    .site-header { position: relative; z-index: 30; isolation: isolate; min-height: 76px; }\n    .brand-mark { display: inline-flex; align-items: center; position: relative; z-index: 31; }\n    .brand-mark img { display: block; width: clamp(68px, 8vw, 104px); height: clamp(68px, 8vw, 104px); object-fit: contain; }\n    .site-header > div { position: relative; z-index: 32; }\n    .administrator-button { position: relative; z-index: 33; pointer-events: auto; cursor: pointer; font-weight: 700; }
+    .page-shell { position: relative; z-index: 0; }
+    .announcement-bar { display:flex; justify-content:center; gap:.65rem; margin:-.5rem 0 1.1rem; padding:.48rem .75rem; border:1px solid rgba(244,207,135,.3); border-radius:999px; color:#ffebc6; background:rgba(54,7,7,.68); font-size:.72rem; text-align:center; }
+    .announcement-dot { width:.42rem; height:.42rem; border-radius:50%; background:#f4c46e; box-shadow:0 0 12px #f4c46e; animation:soft-pulse 2.4s ease-in-out infinite; }\n    .site-header { position: relative; z-index: 30; isolation: isolate; min-height: 76px; }\n    .brand-mark { display: inline-flex; align-items: center; position: relative; z-index: 31; }\n    .brand-mark img { display: block; width: clamp(68px, 8vw, 104px); height: clamp(68px, 8vw, 104px); object-fit: contain; }\n    .site-header > div { position: relative; z-index: 32; }\n    .administrator-button { position: relative; z-index: 33; pointer-events: auto; cursor: pointer; font-weight: 700; }
     .account-menu { position: relative; }
     .account-trigger { max-width: min(42vw, 280px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .account-dropdown { position: absolute; z-index: 1100; top: calc(100% + .35rem); right: 0; min-width: 190px; padding: .35rem 0; background: #fff; border: 1px solid #e4e9e5; border-radius: .75rem; box-shadow: 0 .75rem 2rem rgba(0,0,0,.14); }
     .account-identity { border-bottom: 1px solid #edf0ed; overflow-wrap: anywhere; }
     .account-dropdown .dropdown-item { padding: .55rem 1rem; }
-    .hero { background: linear-gradient(118deg, rgba(22,58,45,.94) 0%, rgba(32,81,61,.92) 58%, rgba(138,100,45,.9) 140%); color: #fff; border: 1px solid rgba(229,190,112,.35); box-shadow: 0 1rem 2.5rem rgba(36,65,48,.12); }
+    .hero { position:relative; isolation:isolate; overflow:hidden; display:flex; align-items:center; min-height:330px; background:linear-gradient(112deg,rgba(43,5,7,.96),rgba(105,17,17,.92) 62%,rgba(143,75,27,.9)); color:#fff; border:1px solid rgba(229,190,112,.42); box-shadow:0 1.25rem 3rem rgba(35,3,4,.24); animation:rise-in .75s ease both; }
+    .hero-copy { position:relative; z-index:2; max-width:660px; }
+    .hero h1 { max-width:650px; line-height:1.08; }
+    .hero h1 span { color:#ffd47c; }
+    .hero-cta { display:inline-flex; gap:.75rem; padding:.78rem 1.15rem; color:#4b170d; background:linear-gradient(135deg,#ffe7a7,#e8b85c); border:1px solid #fff0c6; border-radius:999px; font-weight:700; transition:transform .2s ease,box-shadow .2s ease; }
+    .hero-cta:hover { color:#4b170d; transform:translateY(-3px); box-shadow:0 13px 28px rgba(0,0,0,.24); }
+    .hero-trust { display:flex; flex-wrap:wrap; gap:.65rem 1.2rem; margin-top:1.65rem; color:rgba(255,239,211,.82); font-size:.76rem; }
+    .hero-art { position:absolute; z-index:1; right:4%; top:50%; width:230px; height:230px; transform:translateY(-50%); display:grid; place-items:center; }
+    .hero-diya { font-size:6.5rem; filter:drop-shadow(0 0 22px rgba(255,190,74,.65)); animation:diya-float 4s ease-in-out infinite; }
+    .hero-orbit { position:absolute; inset:12px; border:1px solid rgba(255,213,128,.38); border-radius:50%; animation:orbit-spin 24s linear infinite; }
+    .orbit-two { inset:32px; border-style:dashed; animation-direction:reverse; }
+    .hero-star { position:absolute; color:#ffdc8a; animation:twinkle 2.5s ease-in-out infinite; }
+    .star-one { top:8px; right:35px; font-size:1.6rem; }.star-two { bottom:28px; left:12px; font-size:2rem; animation-delay:1s; }
     .eyebrow { color: #f2c879; letter-spacing: .18em; font-size: .8rem; font-weight: 700; }
     .screen-backdrop { position: fixed; inset: 0; z-index: 1080; background: rgba(12, 24, 19, .58); backdrop-filter: blur(2px); }
     .screen-dialog { position: fixed; z-index: 1081; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(760px, calc(100vw - 2rem)); max-height: 88vh; overflow-y: auto; background: #fffdf8; border: 1px solid rgba(174,139,76,.24); border-radius: 1rem; padding: 1.25rem; box-shadow: 0 1.5rem 4rem rgba(0,0,0,.24); }
     .admin-dialog { width: min(1200px, calc(100vw - 2rem)); }
     .address-dialog { width: min(1000px, calc(100vw - 2rem)); }
+    @keyframes rise-in { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes soft-pulse { 50% { opacity:.45; transform:scale(.78); } }
+    @keyframes twinkle { 50% { opacity:.55; transform:scale(.82) rotate(14deg); } }
+    @keyframes diya-float { 50% { transform:translateY(-9px); } }
+    @media(max-width:700px) { .hero { min-height:300px; } .hero-art { right:-58px; opacity:.28; } .hero-copy { max-width:100%; } .hero h1 { font-size:2.2rem; } .announcement-bar { border-radius:.8rem; font-size:.65rem; } }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
   `]
 })
 export class AppComponent {
