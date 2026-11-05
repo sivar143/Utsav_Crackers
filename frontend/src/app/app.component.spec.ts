@@ -73,8 +73,10 @@ describe('AppComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('UTSAV CRACKERS');
-    expect(fixture.nativeElement.textContent).toContain('Celebrate with care.');
+    expect(fixture.nativeElement.textContent).toContain('Make every celebration');
     expect(fixture.nativeElement.textContent).toContain('Explore our products');
+    expect(fixture.nativeElement.textContent).toContain('THE FESTIVE COLLECTION');
+    expect(fixture.nativeElement.querySelector('.brand-mark img')?.getAttribute('alt')).toBe('Utsav Crackers');
     expect(fixture.nativeElement.textContent).toContain('Sign in');
     expect(fixture.nativeElement.textContent).not.toContain('Sign up');
     expect(fixture.nativeElement.textContent).not.toContain('Welcome back');
